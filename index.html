@@ -1,203 +1,403 @@
-<!DOCTYPE html>
-<html lang="en">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>— Data Science Portfolio</title>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>miaow :3</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Jura:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-</head>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Hanken+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
 
-<body>
-    <div class="layout-frame">
-        <div class="corner-tl"></div>
-        <div class="corner-tr"></div>
-        <div class="corner-bl"></div>
-        <div class="corner-br"></div>
-        <div class="side-text-left">SYSTEM.READY // 2026</div>
-        <div class="side-text-right">R&D MODULE // A.I.</div>
+<style>
+  :root{
+    --cream:#EFECE5;       /* warm paper */
+    --ink:#1A0A0A;         /* accent / text */
+    --text:#3C3032;        /* soft body ink */
+    --muted:#9B928A;       /* labels */
+    --rose:#E8729A;        /* sparing accent s*/
+    --line:rgba(26,10,10,.14);
+    --line-2:rgba(26,10,10,.08);
+    --maxw:1180px;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--cream);
+    color:var(--text);
+    font-family:"Hanken Grotesk",sans-serif;
+    font-weight:300;line-height:1.65;font-size:15px;
+    overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--rose);color:var(--cream)}
+  button{font-family:inherit}
+
+  /* very subtle paper tooth — static, calm */
+  .paper{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  /* serif display vocabulary */
+  .serif{font-family:"Cormorant Garamond",serif}
+
+  /* tiny editorial labels */
+  .label{font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:400}
+  .accent{color:var(--rose)}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 48px;position:relative;z-index:2}
+  @media(max-width:640px){.wrap{padding:0 26px}}
+
+  /* ---------- right spine (echoes the reference's vertical column) ---------- */
+  .spine{position:fixed;top:0;right:0;height:100vh;width:46px;z-index:5;
+    display:flex;align-items:center;justify-content:center;border-left:1px solid var(--line);
+    background:var(--cream)}
+  .spine span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:.6rem;letter-spacing:.34em;
+    text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  .spine span b{color:var(--rose);font-weight:400;margin:0 .1em}
+  @media(max-width:880px){.spine{display:none}}
+  body{padding-right:46px}
+  @media(max-width:880px){body{padding-right:0}}
+
+  /* ---------- nav ---------- */
+  nav{position:fixed;top:0;left:0;right:46px;z-index:40;background:var(--cream);border-bottom:1px solid var(--line)}
+  @media(max-width:880px){nav{right:0}}
+  .nav-in{max-width:var(--maxw);margin:0 auto;padding:20px 48px;display:flex;align-items:center;justify-content:space-between}
+  @media(max-width:640px){.nav-in{padding:16px 26px}}
+  .brand{font-size:.64rem;letter-spacing:.26em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:.7em}
+  .brand .mk{width:6px;height:6px;background:var(--rose);border-radius:50%}
+  .nav-links{display:flex;gap:30px;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .nav-links a{position:relative;transition:color .3s}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-5px;width:0;height:1px;background:var(--rose);transition:width .4s var(--ease)}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a:hover::after{width:100%}
+  @media(max-width:560px){.nav-links{gap:16px;letter-spacing:.12em}}
+
+  /* ---------- hero ---------- */
+  header{padding:200px 0 120px;position:relative}
+  .hero-index{font-size:.62rem;letter-spacing:.24em;color:var(--muted);margin-bottom:42px;display:flex;gap:18px;align-items:center}
+  .hero-index .bar{width:46px;height:1px;background:var(--line)}
+
+  .name-row{display:flex;align-items:flex-start;gap:18px}
+  h1.name{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(3.2rem,11vw,8.4rem);
+    line-height:.94;letter-spacing:-.01em;color:var(--ink)}
+  h1.name em{font-style:italic;font-weight:300}
+  .name-tag{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rose);margin-top:1.2em;white-space:nowrap}
+
+  .type-line{margin-top:30px;font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;
+    font-size:clamp(1.3rem,3.6vw,2.1rem);color:var(--ink);min-height:1.4em}
+  .type-line .pre{color:var(--rose);font-style:normal;font-family:"Hanken Grotesk",sans-serif;font-size:.5em;letter-spacing:.1em;margin-right:.5em;vertical-align:.25em}
+
+  /* meta + lede grid (like the reference's left meta / right text) */
+  .hero-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:60px;margin-top:74px;
+    border-top:1px solid var(--line);padding-top:38px}
+  @media(max-width:760px){.hero-grid{grid-template-columns:1fr;gap:38px}}
+  .meta-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  .meta b{display:block;font-weight:400;color:var(--ink);font-size:.9rem;margin-top:8px}
+  .disc-line{margin-top:22px;font-size:.84rem;color:var(--text)}
+  .disc-line .s{color:var(--rose);margin:0 .5em}
+  .lede{color:var(--text);font-size:1rem;max-width:48ch}
+  .lede + .lede{margin-top:16px}
+
+  /* ---------- section heads ---------- */
+  .pad{padding:120px 0}
+  .sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:20px;
+    border-top:1px solid var(--line);padding-top:20px;margin-bottom:64px}
+  .sec-head h2{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(2rem,5vw,3.4rem);
+    line-height:1;letter-spacing:-.01em;color:var(--ink)}
+  .sec-head h2 em{font-style:italic}
+
+  /* ---------- work ---------- */
+  .work-item{display:grid;grid-template-columns:1fr .85fr;gap:54px;align-items:start;
+    padding:56px 0;border-top:1px solid var(--line-2)}
+  .work-item:first-of-type{border-top:0}
+  .work-item.flip .txt{order:2}.work-item.flip .plate{order:1}
+  @media(max-width:760px){.work-item{grid-template-columns:1fr;gap:30px}.work-item.flip .txt,.work-item.flip .plate{order:0}}
+  .w-idx{font-size:.64rem;letter-spacing:.2em;color:var(--rose);margin-bottom:18px}
+  .work-item h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.6rem,3.6vw,2.4rem);
+    line-height:1.04;color:var(--ink);margin-bottom:6px}
+  .work-item h3 em{font-style:italic;color:var(--ink)}
+  .work-item p{color:var(--text);font-size:.94rem;margin-top:18px;max-width:54ch}
+  .tagrow{margin-top:24px;display:flex;flex-wrap:wrap;gap:8px}
+  .tag{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+    border:1px solid var(--line);padding:6px 11px;border-radius:40px}
+  /* replaceable image plate */
+  .plate{aspect-ratio:4/3;border:1px solid var(--line);background:
+    repeating-linear-gradient(135deg,transparent,transparent 13px,rgba(26,10,10,.025) 13px,rgba(26,10,10,.025) 14px),
+    rgba(26,10,10,.02);
+    display:flex;align-items:flex-end;justify-content:space-between;padding:16px;transition:.5s var(--ease)}
+  .plate:hover{border-color:var(--rose)}
+  .plate .cap{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .plate .fig{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.1rem;color:var(--rose)}
+
+  /* ---------- STACK GRID & PANEL ---------- */
+  .filters{display:flex;flex-wrap:wrap;gap:24px;margin-bottom:40px;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase}
+  .filters button{background:none;border:0;color:var(--muted);cursor:pointer;padding:0 0 6px;border-bottom:1px solid transparent;transition:.3s var(--ease)}
+  .filters button:hover{color:var(--ink)}
+  .filters button.active{color:var(--ink);border-color:var(--rose)}
+  
+  .stack-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+  }
+  .stack-card {
+    font-size: .9rem;
+    color: var(--text);
+    padding: 10px 18px;
+    border: 1px solid var(--line-2);
+    border-radius: 4px;
+    background: rgba(26,10,10,.01);
+    transition: all .4s var(--ease);
+    position: relative;
+  }
+  /* Highlight state when filter matches */
+  .stack-card.highlight {
+    color: var(--ink);
+    font-weight: 400;
+    border-color: var(--rose);
+    background: var(--cream);
+    box-shadow: inset 0 -2px 0 var(--rose);
+  }
+  /* Dim state when filter does NOT match */
+  .stack-card.dim {
+    opacity: .25;
+    transform: scale(0.97);
+  }
+
+  /* ---------- contact ---------- */
+  #contact{padding:120px 0 90px}
+  .c-head{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(2.4rem,7vw,5rem);
+    line-height:1;letter-spacing:-.01em;color:var(--ink);margin:18px 0 54px}
+  .c-head em{font-style:italic;color:var(--rose)}
+  .links{border-top:1px solid var(--line)}
+  .lk{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;text-align:left;
+    background:none;border:0;border-bottom:1px solid var(--line);padding:26px 4px;cursor:pointer;transition:.4s var(--ease)}
+  .lk:hover{padding-left:18px}
+  .lk .plat{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .lk .handle{font-family:"Cormorant Garamond",serif;font-size:clamp(1.3rem,3.4vw,1.9rem);color:var(--ink);transition:color .3s}
+  .lk:hover .handle{color:var(--rose)}
+  .lk .arr{color:var(--rose);font-size:1rem;transition:transform .4s var(--ease)}
+  .lk:hover .arr{transform:translate(5px,-5px)}
+  .copy-note{color:var(--rose);letter-spacing:.04em}
+
+  .toast{position:fixed;left:50%;bottom:34px;transform:translate(-50%,160%);z-index:60;background:var(--ink);
+    color:var(--cream);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:13px 22px;transition:transform .45s var(--ease)}
+  .toast.show{transform:translate(-50%,0)}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-right:0}
+  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .foot-in b{color:var(--ink);font-weight:400}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+
+<div class="paper"></div>
+
+<aside class="spine" aria-hidden="true">
+  <span>Machine Learning <b>//</b> Data Science <b>//</b> Software Development <b>//</b> Mathematics</span>
+</aside>
+
+<nav>
+  <div class="nav-in">
+    <div class="brand"><span class="mk"></span><span>Online</span></div>
+    <div class="nav-links">
+      <a href="#top">About her</a>
+      <a href="#work">What she does</a>
+      <a href="#stack-sec">What she knows</a>
+      <a href="#contact">Talk to her</a>
+    </div>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="wrap">
+    <div class="hero-index reveal"><span>About her</span><span class="bar"></span></div>
+
+    <div class="name-row reveal">
+      <h1 class="name"><span id="nameLine1">Your</span> <em id="nameLine2">Name</em></h1>
+      <span class="name-tag">Data&nbsp;Scientist<br>Est. UK</span>
     </div>
 
-    <nav class="navbar">
-        <div class="logo">ᓚᘏᗢ<span class="dot">.</span></div>
-        <div class="nav-links">
-            <a href="#hero">Home</a>
-            <a href="#about">About</a>
-            <a href="#projects">Projects</a>
-            <a href="#contact">Contact</a>
+    <div class="type-line reveal"><span class="pre">→</span><span id="typed"></span></div>
+
+    <div class="hero-grid reveal">
+      <div class="meta">
+        <div class="meta-cols">
+          <div><span class="label">Field</span><b>Supply Chain<br>Risk Intelligence</b></div>
+          <div><span class="label">Based</span><b>United Kingdom</b></div>
         </div>
-    </nav>
+        <p class="disc-line">Machine Learning <span class="s">//</span> Data Science <span class="s">//</span> Software Development <span class="s">//</span> Mathematics</p>
+      </div>
+      <div>
+        <p class="lede">I build AI systems that read risk out of messy supplier data; frontier models paired with classical and deep learning.</p>
+        <p class="lede">Then I ship them to production: cloud pipelines, dashboards, and agentic workflows that quietly remove the redundant work.</p>
+      </div>
+    </div>
+  </div>
+</header>
 
-    <main>
-        <main>
-            <section id="hero" class="hero-section">
-                <div class="hero-content">
-                    <div class="tech-badge">STATUS: ONLINE</div>
-                    <h1>Ri here! =^^=</h1>
-                    <div class="hero-decoration-line"></div>
-                    <p class="subtitle">Building the next generation of artificial intelligence.</p>
+<section id="work" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>What my work consists of</h2></div>
 
-                    <div class="tech-stats">
-                        <span>Machine Learning</span> // <span>Data Science</span> // <span>Software Development</span>
-                        // <span>Mathematics</span>
-                    </div>
+    <div class="work-item reveal">
+      <div class="txt">
+        <div class="w-idx">RISK INTELLIGENCE</div>
+        <h3>AI <em>risk intelligence</em> for supplier portfolios</h3>
+        <p>AI systems that surface supply-chain risk hiding inside complex supplier-portfolio data. A deliberately mixed approach leveraging frontier LLMs reasoning over unstructured signals, alongside traditional statistical and deep-learning models where scale and explainability demand precision.</p>
+        <div class="tagrow"><span class="tag">Frontier LLMs</span><span class="tag">Deep Learning</span><span class="tag">Classical ML</span><span class="tag">Risk Modelling</span></div>
+      </div>
+      <div class="plate"><span class="cap">[ image slot ]</span><span class="fig">fig. 01</span></div>
+    </div>
 
-                    <div class="cta-group">
-                        <a href="#projects" class="btn btn-primary">Explore Research</a>
-                        <a href="#contact" class="btn btn-outline">Connect</a>
-                    </div>
-                </div>
-            </section>
+    <div class="work-item flip reveal">
+      <div class="txt">
+        <div class="w-idx">CLOUD PIPELINES</div>
+        <h3>Production <em>data pipelines</em> on the cloud</h3>
+        <p>Data-analysis pipelines deployed on Cloud Run and orchestrated by Cloud Scheduler, so they run reliably and on time. BigQuery is the analytical warehouse; results surface as living dashboards in Looker Studio (Data Studio).</p>
+        <div class="tagrow"><span class="tag">Cloud Run</span><span class="tag">Cloud Scheduler</span><span class="tag">BigQuery</span><span class="tag">Looker Studio</span></div>
+      </div>
+      <div class="plate"><span class="cap">[ image slot ]</span><span class="fig">fig. 02</span></div>
+    </div>
 
-            <section id="about" class="section">
-            <h2 class="section-title">~/User/ <span class="highlight">Who is she?</span></h2>
-            
-            <div class="card about-card" style="margin-bottom: 2rem; border-color: rgba(255, 0, 255, 0.3);">
-                <p>Hello! I’m a 19 year-old multi-hat wearing data scientist based in the UK!!
-                    I build end-to-end AI stuff meow!
-                    From training models in PyTorch to deploying them via APIs, I handle the full data pipeline. 
-                    Currently breaking things, fixing them, then figuring out why they broke :P
-                </p>
-            </div>
+    <div class="work-item reveal">
+      <div class="txt">
+        <div class="w-idx">AGENTIC SYSTEMS</div>
+        <h3>Agentic <em>automation</em> with LangGraph</h3>
+        <p>Agentic systems in LangGraph that automate the redundant, repetitive work spread across departments in supply-chain risk management; chaining tools and models into reliable workflows, so human attention is reserved for the judgement calls that need it.</p>
+        <div class="tagrow"><span class="tag">LangGraph</span><span class="tag">Agents</span><span class="tag">Workflow Automation</span><span class="tag">Cross-team Ops</span></div>
+      </div>
+      <div class="plate"><span class="cap">[ image slot ]</span><span class="fig">fig. 03</span></div>
+    </div>
+  </div>
+</section>
 
-            <div class="ascii-container" style="
-                background: #050505; /* Deep black background */
-                border: 1px solid #ff00ff; /* Solid neon pink border */
-                padding: 2rem;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                position: relative;
-                overflow: hidden;
-                box-shadow: inset 0 0 20px rgba(255, 0, 255, 0.1), 0 0 15px rgba(255, 0, 255, 0.2);">
-                
-                <div style="font-family: 'Rajdhani', sans-serif; color: #ff00ff; font-size: 0.7rem; letter-spacing: 5px; margin-bottom: 1.5rem; align-self: flex-start; text-shadow: 0 0 5px #ff00ff;">
-                    [NEURAL ACTIVATION COMPLETION]
-                </div>
+<section id="stack-sec" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>What I've worked with</h2><span class="label">Stack</span></div>
+    
+    <div class="filters reveal" id="filters">
+      <button class="active" data-cat="all">All</button>
+      <button data-cat="lang">Languages</button>
+      <button data-cat="llm">Agentic Workflow</button>
+      <button data-cat="sci">Scientific &amp; Data</button>
+      <button data-cat="ml">ML / DL</button>
+      <button data-cat="cloud">Cloud / MLOps</button>
+      <button data-cat="tools">Tools</button>
+    </div>
+    
+    <div id="stack-grid-container" class="stack-grid reveal"></div>
+  </div>
+</section>
 
-                <pre style="
-                    font-family: 'Courier New', monospace; 
-                    line-height: 1.0; 
-                    font-size: 16px; /* Slightly larger for better clarity */
-                    color: #ff00ff; /* Neon Pink */
-                    text-shadow: 0 0 10px #ff00ff, 0 0 20px rgba(255, 0, 255, 0.5);
-                    user-select: none;
-                    margin: 0;
-                    display: inline-block;
-                    filter: brightness(1.2);">
-                    ⢠⣿⣿⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⡆⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⡆⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⡀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣠⣤⣤⣼⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀
-            ⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀
-            ⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠘⣿⣿⣿⣿⠟⠁⠀⠀⠀⠹⣿⣿⣿⣿⣿⠟⠁⠀⠀⠹⣿⣿⡿⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⣿⣿⣿⡇⠀⠀⠀⢼⣿⠀⢿⣿⣿⣿⣿⠀⣾⣷⠀⠀⢿⣿⣷⠀⠀⠀⠀⠀
-            ⠀⠀⠀⢠⣿⣿⣿⣷⡀⠀⠀⠈⠋⢀⣿⣿⣿⣿⣿⡀⠙⠋⠀⢀⣾⣿⣿⠀⠀⠀⠀⠀
-            ⢀⣀⣀⣀⣿⣿⣿⣿⣿⣶⣶⣶⣶⣿⣿⣿⣿⣾⣿⣷⣦⣤⣴⣿⣿⣿⣿⣤⠤⢤⣤⡄
-            ⠈⠉⠉⢉⣙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⣀⣀⣀⡀⠀
-            ⠐⠚⠋⠉⢀⣬⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣥⣀⡀⠈⠀⠈⠛
-            ⠀⠀⠴⠚⠉⠀⠀⠀⠉⠛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠋⠁⠀⠀⠀⠉⠛⠢⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀
-                </pre>
-                
-            </div>
-        </section>
+<section id="contact">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="label">Contact &amp; Media</span>
+      <h2 class="c-head serif">Let's make<br>something <em>sharp.</em></h2>
+    </div>
+    <div class="links reveal">
+      <a class="lk" href="https://github.com/cat7enthusiast" target="_blank" rel="noopener">
+        <div><div class="plat">GitHub</div><div class="handle">cat7enthusiast</div></div><span class="arr">↗</span>
+      </a>
+      <a class="lk" href="https://www.tiktok.com/@lachinemearning.com" target="_blank" rel="noopener">
+        <div><div class="plat">TikTok</div><div class="handle">@lachinemearning.com</div></div><span class="arr">↗</span>
+      </a>
+      <button class="lk" id="discordBtn">
+        <div><div class="plat">Discord <span class="copy-note">— tap to copy</span></div><div class="handle">irtificialantelligence</div></div><span class="arr">⧉</span>
+      </button>
+    </div>
+  </div>
+</section>
 
-            <section id="projects" class="section">
-                <h2 class="section-title">~/Documents/ <span class="highlight">Research & Projects</span></h2>
-                <div class="grid projects-grid">
-                    <!-- Project Cards -->
-                    <div class="card project-card">
-                        <h3>Neural Network</h3>
-                        <p>Implementation of a neural network from scratch with backpropagation and gradient descent.
-                        </p>
-                        <div class="tags">
-                            <span>C++</span>
-                        </div>
-                    </div>
-                    <div class="card project-card">
-                        <h3>Quantitative analysis and automated trading model</h3>
-                        <p>Machine learning algorithms like xgboost used for time series analysis and automated trading.
-                            Currently in progress.</p>
-                        <div class="tags">
-                            <span>Python</span><span>Scikit-learn</span><span>XGBoost</span>
-                        </div>
-                    </div>
-                    <div class="card project-card">
-                        <h3>Facial recognition file access system</h3>
-                        <p>A-level project using OpenCV and face recognition to access files with a light-weight
-                            database.</p>
-                        <div class="tags">
-                            <span>OpenCV</span><span>Python</span><span>SQLite</span><span>PYQT5</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
+<footer>
+  <div class="wrap foot-in">
+    <span>© <span id="yr"></span> <b id="footName">Ri here ! =^..^=</b></span>
+    <span>Machine Learning · Data Science · Mathematics</span>
+    <span class="accent">Noir // Rose</span>
+  </div>
+</footer>
 
-            <section id="technologies" class="section">
-                <h2 class="section-title">~/Stack/ <span class="highlight">Technologies</span></h2>
-                <div class="card technologies-card">
-                    <div class="tech-group">
-                        <h3>Languages</h3>
-                        <div class="tags">
-                            <span>Python</span><span>C++</span><span>SQL</span><span>HTML</span><span>CSS</span><span>JavaScript</span>
-                        </div>
-                    </div>
-                    <div class="tech-group" style="margin-top: 1.5rem;">
-                        <h3>Libraries & Frameworks</h3>
-                        <div class="tags">
-                            <span>OpenCV</span><span>PyTorch</span><span>Matplotlib</span><span>Seaborn</span><span>Scikit-learn</span><span>XGBoost</span><span>TensorFlow</span><span>NumPy</span><span>Pandas</span>
-                        </div>
-                    </div>
-                    <div class="tech-group" style="margin-top: 1.5rem;">
-                        <h3>Tools & Databases</h3>
-                        <div class="tags">
-                            <span>Git</span><span>SQLite</span><span>Jupyter</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
+<div class="toast" id="toast">Copied to clipboard</div>
 
-            <section id="contact" class="section">
-                <h2 class="section-title">~/Media/ <span class="highlight">Contact</span></h2>
-                <div class="card contact-card">
-                    <p>Beep beep get in touch</p>
-                    <div class="contact-links"
-                        style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; margin-top: 2rem;">
-                        <a href="https://github.com/cat7enthusiast" target="_blank" class="btn btn-primary">GitHub:
-                            cat7enthusiast</a>
-                        <a href="https://discord.com/users/754792409770229861" target="_blank"
-                            class="btn btn-primary">Discord:
-                            lachinemearning</a>
-                    </div>
-                </div>
-            </section>
-        </main>
+<script>
+  const NAME = "Ri here! =^..^=";
 
-        <footer>
-            <p>© 2026 // SYSTEM ONLINE</p>
-        </footer>
+  (function setName(){
+    const p = NAME.trim().split(/\s+/);
+    document.getElementById('nameLine1').textContent = p.shift() || "Your";
+    document.getElementById('nameLine2').textContent = p.join(" ") || "Name";
+    document.getElementById('footName').textContent  = NAME;
+    document.getElementById('yr').textContent = new Date().getFullYear();
+  })();
 
-        <script type="module" src="main.js"></script>
-</body>
+  /* typewriter — her disciplines, calm pace */
+  const words=["Machine Learning","Data Science","Software Development","Mathematics"];
+  const typed=document.getElementById('typed');
+  let wi=0,ci=0,del=false;
+  (function tw(){
+    const w=words[wi];typed.textContent=w.slice(0,ci);
+    if(!del&&ci<w.length){ci++;setTimeout(tw,80);}
+    else if(!del&&ci===w.length){del=true;setTimeout(tw,1700);}
+    else if(del&&ci>0){ci--;setTimeout(tw,36);}
+    else{del=false;wi=(wi+1)%words.length;setTimeout(tw,300);}
+  })();
 
+  /* Dataset array mapped with categories */
+  const stack=[
+    {n:"Python",c:"lang"},{n:"C++",c:"lang"},{n:"SQL",c:"lang"},{n:"JavaScript",c:"lang"},{n:"HTML",c:"lang"},{n:"CSS",c:"lang"},
+    {n:"PyTorch",c:"ml"},{n:"TensorFlow",c:"ml"},{n:"Scikit-learn",c:"ml"},{n:"XGBoost",c:"ml"},{n:"OpenCV",c:"ml"},{n:"Statsmodels",c:"ml"},
+    {n:"NumPy",c:"sci"},{n:"Pandas",c:"sci"},{n:"SciPy",c:"sci"},{n:"Matplotlib",c:"sci"},{n:"Seaborn",c:"sci"},
+    {n:"LangGraph",c:"llm"},{n:"LangChain",c:"llm"},{n:"Frontier LLM APIs",c:"llm"},
+    {n:"Google Cloud",c:"cloud"},{n:"Cloud Run",c:"cloud"},{n:"Cloud Scheduler",c:"cloud"},
+    {n:"BigQuery",c:"cloud"},{n:"Looker Studio",c:"cloud"},{n:"Docker",c:"cloud"},
+    {n:"Git",c:"tools"},{n:"Jupyter",c:"tools"},{n:"SQLite",c:"tools"}
+  ];
 
-</html>
+  // Render elements in a flat list layout side-by-side
+  const gridContainer = document.getElementById('stack-grid-container');
+  gridContainer.innerHTML = stack.map(s => {
+    return `<div class="stack-card" data-cat="${s.c}">${s.n}</div>`;
+  }).join('');
 
+  // Handle interactive highlighting rules
+  document.querySelectorAll('#filters button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('#filters button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      
+      const selectedCat = b.dataset.cat;
+      const cards = document.querySelectorAll('.stack-card');
 
+      cards.forEach(card => {
+        if (selectedCat === 'all') {
+          // Normal default state
+          card.classList.remove('highlight', 'dim');
+        } else if (card.dataset.cat === selectedCat) {
+          // Match selected panel criteria
+          card.classList.add('highlight');
+          card.classList.remove('dim');
+        } else {
+          // Mute remaining tags
+          card.classList.remove('highlight');
+          card.classList.add('dim');
+        }
+      });
+    });
+  });
 
+  /* discord copy */
+  const toast=document.getElementById('toast');
+  document.getElementById('discordBtn').addEventListener('click',()=>{
+    const t="irtificialantelligence";
+    (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject())
+      .catch(()=>{const i=document.createElement('input');i.value=t;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();});
+    toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800);
+  });
+
+  /* gentle scroll reveals */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
