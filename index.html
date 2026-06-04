@@ -1,10 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>— Data Science Portfolio</title>
+<title>Ri — Data Science Portfolio</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Hanken+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Hanken+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
 <style>
   :root{
@@ -17,6 +20,14 @@
     --line-2:rgba(26,10,10,.08);
     --maxw:1180px;
     --ease:cubic-bezier(.16,1,.3,1);
+    
+    /* Code Viewer Themes */
+    --code-bg: #141111;
+    --code-kw: #E8729A;
+    --code-str: #A3B899;
+    --code-txt: #D4CFC9;
+    --code-num: #8FA1B3;
+    --code-fn: #7FB4CA;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -31,21 +42,18 @@
   ::selection{background:var(--rose);color:var(--cream)}
   button{font-family:inherit}
 
-  /* very subtle paper tooth — static, calm */
+  /* subtle paper tooth */
   .paper{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;mix-blend-mode:multiply;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 
-  /* serif display vocabulary */
   .serif{font-family:"Cormorant Garamond",serif}
-
-  /* tiny editorial labels */
   .label{font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:400}
   .accent{color:var(--rose)}
 
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 48px;position:relative;z-index:2}
   @media(max-width:640px){.wrap{padding:0 26px}}
 
-  /* ---------- right spine (echoes the reference's vertical column) ---------- */
+  /* ---------- right spine ---------- */
   .spine{position:fixed;top:0;right:0;height:100vh;width:46px;z-index:5;
     display:flex;align-items:center;justify-content:center;border-left:1px solid var(--line);
     background:var(--cream)}
@@ -85,7 +93,6 @@
     font-size:clamp(1.3rem,3.6vw,2.1rem);color:var(--ink);min-height:1.4em}
   .type-line .pre{color:var(--rose);font-style:normal;font-family:"Hanken Grotesk",sans-serif;font-size:.5em;letter-spacing:.1em;margin-right:.5em;vertical-align:.25em}
 
-  /* meta + lede grid (like the reference's left meta / right text) */
   .hero-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:60px;margin-top:74px;
     border-top:1px solid var(--line);padding-top:38px}
   @media(max-width:760px){.hero-grid{grid-template-columns:1fr;gap:38px}}
@@ -105,11 +112,11 @@
   .sec-head h2 em{font-style:italic}
 
   /* ---------- work ---------- */
-  .work-item{display:grid;grid-template-columns:1fr .85fr;gap:54px;align-items:start;
+  .work-item{display:grid;grid-template-columns:1fr .95fr;gap:54px;align-items:center;
     padding:56px 0;border-top:1px solid var(--line-2)}
   .work-item:first-of-type{border-top:0}
   .work-item.flip .txt{order:2}.work-item.flip .plate{order:1}
-  @media(max-width:760px){.work-item{grid-template-columns:1fr;gap:30px}.work-item.flip .txt,.work-item.flip .plate{order:0}}
+  @media(max-width:960px){.work-item{grid-template-columns:1fr;gap:30px}.work-item.flip .txt,.work-item.flip .plate{order:0}}
   .w-idx{font-size:.64rem;letter-spacing:.2em;color:var(--rose);margin-bottom:18px}
   .work-item h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.6rem,3.6vw,2.4rem);
     line-height:1.04;color:var(--ink);margin-bottom:6px}
@@ -118,14 +125,26 @@
   .tagrow{margin-top:24px;display:flex;flex-wrap:wrap;gap:8px}
   .tag{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
     border:1px solid var(--line);padding:6px 11px;border-radius:40px}
-  /* replaceable image plate */
-  .plate{aspect-ratio:4/3;border:1px solid var(--line);background:
-    repeating-linear-gradient(135deg,transparent,transparent 13px,rgba(26,10,10,.025) 13px,rgba(26,10,10,.025) 14px),
-    rgba(26,10,10,.02);
-    display:flex;align-items:flex-end;justify-content:space-between;padding:16px;transition:.5s var(--ease)}
+  
+  /* Updated Interactive Plate Layout to host code windows smoothly */
+  .plate{aspect-ratio:4/3.1;border:1px solid var(--line);background:var(--code-bg);
+    display:flex;flex-direction:column;border-radius:6px;overflow:hidden;box-shadow:0 12px 34px rgba(26,10,10,.12);transition:.5s var(--ease)}
   .plate:hover{border-color:var(--rose)}
-  .plate .cap{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-  .plate .fig{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.1rem;color:var(--rose)}
+  
+  /* Code Terminal / Editor Elements */
+  .p-head{background:rgba(255,255,255,.03);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between}
+  .p-dots{display:flex;gap:6px}.p-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2)}
+  .p-dot.r{background:var(--rose)}
+  .p-title{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--muted);letter-spacing:0.05em}
+  .p-body{flex:1;padding:18px;margin:0;overflow:auto;font-family:"JetBrains Mono",monospace;font-size:11px;line-height:1.5;color:var(--code-txt);text-align:left}
+  
+  /* Code Highlighting Syntaxes */
+  .k{color:var(--code-kw)}  /* keyword */
+  .s{color:var(--code-str)} /* string */
+  .n{color:var(--code-num)} /* numbers */
+  .f{color:var(--code-fn)}  /* functions */
+  .c{color:var(--muted);font-style:italic} /* comment */
+  .o{color:var(--rose)}     /* operator output marker */
 
   /* ---------- STACK GRID & PANEL ---------- */
   .filters{display:flex;flex-wrap:wrap;gap:24px;margin-bottom:40px;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase}
@@ -150,7 +169,6 @@
     transition: all .4s var(--ease);
     position: relative;
   }
-  /* Highlight state when filter matches */
   .stack-card.highlight {
     color: var(--ink);
     font-weight: 400;
@@ -158,7 +176,6 @@
     background: var(--cream);
     box-shadow: inset 0 -2px 0 var(--rose);
   }
-  /* Dim state when filter does NOT match */
   .stack-card.dim {
     opacity: .25;
     transform: scale(0.97);
@@ -192,6 +209,8 @@
   .reveal.in{opacity:1;transform:none}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 </style>
+</head>
+<body>
 
 <div class="paper"></div>
 
@@ -233,6 +252,7 @@
       <div>
         <p class="lede">I build AI systems that read risk out of messy supplier data; frontier models paired with classical and deep learning.</p>
         <p class="lede">Then I ship them to production: cloud pipelines, dashboards, and agentic workflows that quietly remove the redundant work.</p>
+        <p class="lede">On the side, I do content creation to help machine learning become more accessible to people trying to pivot their career, while also combatting the fear mongering around AI :></p>
       </div>
     </div>
   </div>
@@ -249,7 +269,26 @@
         <p>AI systems that surface supply-chain risk hiding inside complex supplier-portfolio data. A deliberately mixed approach leveraging frontier LLMs reasoning over unstructured signals, alongside traditional statistical and deep-learning models where scale and explainability demand precision.</p>
         <div class="tagrow"><span class="tag">Frontier LLMs</span><span class="tag">Deep Learning</span><span class="tag">Classical ML</span><span class="tag">Risk Modelling</span></div>
       </div>
-      <div class="plate"><span class="cap">[ image slot ]</span><span class="fig">fig. 01</span></div>
+      <div class="plate">
+        <div class="p-head">
+          <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
+          <div class="p-title">risk_analysis.py</div>
+        </div>
+        <pre class="p-body"><span class="k">import</span> statsmodels.api <span class="k">as</span> sm
+<span class="k">import</span> statsmodels.formula.api <span class="k">as</span> smf
+
+model = smf.<span class="f">logit</span>(<span class="s">"disrupted ~ cfr_score + leverage_ratio"</span>, data=df)
+res = model.<span class="f">fit</span>(disp=<span class="n">0</span>)
+
+<span class="f">print</span>(res.<span class="f">summary</span>().tables[<span class="n">1</span>])
+<span class="o">====================================================</span>
+<span class="o">               coef    std err          z      P>|z|</span>
+<span class="o">----------------------------------------------------</span>
+<span class="o">Intercept    1.4208      0.312      4.554      0.000</span>
+<span class="o">cfr_score   -0.8942      0.141     -6.342      0.000</span>
+<span class="o">leverage     0.5137      0.183      2.807      0.005</span>
+<span class="o">====================================================</span></pre>
+      </div>
     </div>
 
     <div class="work-item flip reveal">
@@ -259,7 +298,26 @@
         <p>Data-analysis pipelines deployed on Cloud Run and orchestrated by Cloud Scheduler, so they run reliably and on time. BigQuery is the analytical warehouse; results surface as living dashboards in Looker Studio (Data Studio).</p>
         <div class="tagrow"><span class="tag">Cloud Run</span><span class="tag">Cloud Scheduler</span><span class="tag">BigQuery</span><span class="tag">Looker Studio</span></div>
       </div>
-      <div class="plate"><span class="cap">[ image slot ]</span><span class="fig">fig. 02</span></div>
+      <div class="plate">
+        <div class="p-head">
+          <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
+          <div class="p-title">bash — gcloud deploy</div>
+        </div>
+        <pre class="p-body">
+<span class="k">$</span> gcloud builds submit --tag gcr.io/supply-risk/engine:<span class="s">v2.1</span>
+
+<span class="k">$</span> gcloud run deploy risk-pipeline-service \
+    --image gcr.io/supply-risk/engine:<span class="s">v2.1</span> \
+    --region europe-west2 --no-allow-unauthenticated
+
+<span class="o">Deploying container to Cloud Run service [risk-pipeline-service]...</span>
+<span class="o">✓ Service deployed successfully.</span>
+<span class="o">URL: https://risk-pipeline-service-uk-an.a.run.app</span>
+
+<span class="k">$</span> gcloud scheduler jobs create http daily-risk-evaluation \
+    --schedule=<span class="s">"0 6 * * 1-5"</span> --location=europe-west2 \
+    --uri=<span class="s">"https://risk-pipeline-service-uk-an.a.run.app/run"</span></pre>
+      </div>
     </div>
 
     <div class="work-item reveal">
@@ -269,7 +327,28 @@
         <p>Agentic systems in LangGraph that automate the redundant, repetitive work spread across departments in supply-chain risk management; chaining tools and models into reliable workflows, so human attention is reserved for the judgement calls that need it.</p>
         <div class="tagrow"><span class="tag">LangGraph</span><span class="tag">Agents</span><span class="tag">Workflow Automation</span><span class="tag">Cross-team Ops</span></div>
       </div>
-      <div class="plate"><span class="cap">[ image slot ]</span><span class="fig">fig. 03</span></div>
+      <div class="plate">
+        <div class="p-head">
+          <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
+          <div class="p-title">agentic_workflow.py</div>
+        </div>
+        <pre class="p-body"><span class="k">from</span> langgraph.graph <span class="k">import</span> StateGraph, END
+
+workflow = <span class="f">StateGraph</span>(SupplierState)
+
+workflow.<span class="f">add_node</span>(<span class="s">"fetch_news"</span>, scrape_unstructured_signals)
+workflow.<span class="f">add_node</span>(<span class="s">"assess_risk"</span>, model_reasoning_node)
+workflow.<span class="f">add_node</span>(<span class="s">"escalate"</span>, human_in_the_loop_approval)
+
+workflow.<span class="f">set_entry_point</span>(<span class="s">"fetch_news"</span>)
+workflow.<span class="f">add_edge</span>(<span class="s">"fetch_news"</span>, <span class="s">"assess_risk"</span>)
+
+workflow.<span class="f">add_conditional_edges</span>(
+    <span class="s">"assess_risk"</span>,
+    <span class="k">lambda</span> state: <span class="s">"escalate"</span> <span class="k">if</span> state[<span class="s">"score"</span>] > <span class="n">0.75</span> <span class="k">else</span> END
+)
+app = workflow.<span class="f">compile</span>()</pre>
+      </div>
     </div>
   </div>
 </section>
@@ -333,7 +412,7 @@
     document.getElementById('yr').textContent = new Date().getFullYear();
   })();
 
-  /* typewriter — her disciplines, calm pace */
+  /* typewriter */
   const words=["Machine Learning","Data Science","Software Development","Mathematics"];
   const typed=document.getElementById('typed');
   let wi=0,ci=0,del=false;
@@ -356,13 +435,11 @@
     {n:"Git",c:"tools"},{n:"Jupyter",c:"tools"},{n:"SQLite",c:"tools"}
   ];
 
-  // Render elements in a flat list layout side-by-side
   const gridContainer = document.getElementById('stack-grid-container');
   gridContainer.innerHTML = stack.map(s => {
     return `<div class="stack-card" data-cat="${s.c}">${s.n}</div>`;
   }).join('');
 
-  // Handle interactive highlighting rules
   document.querySelectorAll('#filters button').forEach(b=>{
     b.addEventListener('click',()=>{
       document.querySelectorAll('#filters button').forEach(x=>x.classList.remove('active'));
@@ -373,14 +450,11 @@
 
       cards.forEach(card => {
         if (selectedCat === 'all') {
-          // Normal default state
           card.classList.remove('highlight', 'dim');
         } else if (card.dataset.cat === selectedCat) {
-          // Match selected panel criteria
           card.classList.add('highlight');
           card.classList.remove('dim');
         } else {
-          // Mute remaining tags
           card.classList.remove('highlight');
           card.classList.add('dim');
         }
@@ -401,3 +475,5 @@
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
+</body>
+</html>
