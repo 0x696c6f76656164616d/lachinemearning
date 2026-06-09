@@ -261,6 +261,7 @@
       <a href="#maths">Maths</a>
       <a href="#ds">Data Science</a>
       <a href="#dl">Deep Learning</a>
+      <a href="#llms">LLMs</a>
       <a href="#donate">Support</a>
       <a class="back" href="index.html"><span class="arr">←</span>Portfolio</a>
     </div>
@@ -709,7 +710,93 @@
     </div>
   </div>
 </section>
+<!-- ============ LEVERAGING LLMs ============ -->
+<section id="llms" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Working with <em>LLMs</em></h2><span class="label">Phase 04 · the modern tool</span></div>
 
+    <p class="road-intro reveal" style="margin-bottom:14px">Large language models like ChatGPT and Claude are the tools you'll actually reach for every day, both to learn faster and to build things. Used well, an LLM is like a patient tutor who never gets tired of your questions. Used badly, it quietly teaches you wrong things. <b>And you'll be surprised to know that most apps with built in chatbots are just LLM wrappers with a prompt thrown at it to take the role of the platforms help bot lol</b></p>
+    <p class="road-intro reveal" style="margin-bottom:30px">The skill isn't just typing a question. It's knowing how to ask, how to check the answer, and how to plug a model into your own code. Learn it last, on purpose, because it's most useful once you understand enough to spot when the model is wrong.</p>
+
+    <!-- as a learning tool -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 01</div>
+          <h3>LLMs as a <em>learning</em> partner</h3>
+          <div class="body">
+            <p>The fastest way to get unstuck. Paste an error, ask it to explain a concept five different ways, or have it quiz you. But it can sound confident and still be wrong, so treat every answer as a smart friend's guess, not gospel.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              An LLM <b>predicts the next likely words</b>, it doesn't look things up or truly "know." That's why it can invent facts. Use it to understand and explore, then verify anything that matters against a real source.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Explain like I'm 5</span><span class="tag">Debugging help</span><span class="tag">Self-quizzing</span><span class="tag">Always verify</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">learning_with_llms.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.anthropic.com/learn" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Learn <span class="free">free</span></span><span class="r-desc">Guides on getting useful, accurate answers from Claude.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.deeplearning.ai/short-courses/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>DeepLearning.AI: Short Courses <span class="free">free</span></span><span class="r-desc">Free hour-long courses on building with LLMs, beginner-friendly.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># ask it to explain, then check the explanation yourself.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- prompt engineering -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 02</div>
+          <h3>Prompt <em>engineering</em></h3>
+          <div class="body">
+            <p>Just a fancy name for asking clearly. The model can only work with what you give it, so the more specific you are about the goal, the format, and any examples, the better the answer. This is a real, learnable skill that makes everything else easier.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              A vague question gets a vague answer. <b>Tell it who to be, what you want, and show one example.</b> "Fix my code" is weak; "You're a Python tutor, here's my code and the error, explain the bug in plain English then show the fix" is strong.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Be specific</span><span class="tag">Give examples</span><span class="tag">Set a role</span><span class="tag">Ask for steps</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">prompt_engineering.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Prompt Engineering <span class="free">free</span></span><span class="r-desc">The clearest practical guide. Clear instructions, examples, step-by-step reasoning.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.promptingguide.ai/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Prompting Guide <span class="free">free</span></span><span class="r-desc">A free, thorough reference covering techniques with examples.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># a good prompt is just a clear brief. practice writing them.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- api calling -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 03</div>
+          <h3>Calling an <em>API</em></h3>
+          <div class="body">
+            <p>This is how you go from chatting in a browser to building your own apps powered by a model. An API is just a way for your code to send a message to the model and get a reply back, the same conversation, but done in Python instead of a chat box.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              An API is a <b>waiter between your code and the model.</b> Your program hands over a request (your prompt plus a secret key that proves it's you), the model cooks up a reply, and the waiter brings it back for your code to use.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">API keys</span><span class="tag">Requests</span><span class="tag">Python SDK</span><span class="tag">Build real apps</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">first_api_call.py</div></div>
+          <div class="p-body">
+            <a class="res" href="https://docs.claude.com/en/docs/get-started" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Get Started <span class="free">free docs</span></span><span class="r-desc">Your first API call in Python, step by step.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.w3schools.com/python/module_requests.asp" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>W3Schools: Python Requests <span class="free">free</span></span><span class="r-desc">How code sends and receives data, the basics behind any API.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># never paste your API key into public code or GitHub.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 <!-- ============ DONATIONS ============ -->
 <section id="donate" class="pad">
   <div class="wrap">
