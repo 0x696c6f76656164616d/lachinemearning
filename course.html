@@ -109,6 +109,40 @@
   .sec-head h2 em{font-style:italic}
   .sec-head .label{white-space:nowrap}
 
+  /* ---------- manifesto banner ---------- */
+  .manifesto{border:1px solid var(--rose);border-radius:8px;background:rgba(232,114,154,.05);
+    padding:38px 42px;margin-bottom:54px}
+  @media(max-width:640px){.manifesto{padding:28px 24px}}
+  .manifesto .label{color:var(--rose);margin-bottom:16px;display:block}
+  .manifesto p{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;
+    font-size:clamp(1.25rem,2.6vw,1.75rem);line-height:1.4;color:var(--ink);max-width:42ch}
+  .manifesto p + p{margin-top:18px}
+  .manifesto p b{font-style:normal;font-weight:400;color:var(--rose)}
+  .manifesto .sign{margin-top:22px;font-family:"Hanken Grotesk",sans-serif;font-style:normal;
+    font-size:.82rem;color:var(--text);max-width:60ch}
+
+  /* ---------- donation ---------- */
+  .donate-box{border:1px solid var(--line);border-radius:8px;background:rgba(26,10,10,.01);
+    padding:54px;display:grid;grid-template-columns:1.25fr .85fr;gap:48px;align-items:center;transition:.5s var(--ease)}
+  .donate-box:hover{border-color:var(--rose)}
+  @media(max-width:760px){.donate-box{grid-template-columns:1fr;gap:30px;padding:38px 30px}}
+  .donate-box h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.8rem,4.2vw,2.8rem);
+    line-height:1.04;color:var(--ink);margin-bottom:18px}
+  .donate-box h3 em{font-style:italic;color:var(--rose)}
+  .donate-box p{color:var(--text);font-size:.96rem;max-width:48ch}
+  .donate-box p + p{margin-top:14px}
+  .donate-box p b{color:var(--ink);font-weight:400}
+  .donate-side{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+  .donate-note{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.15rem;color:var(--ink);line-height:1.35}
+  .kofi-btn{display:inline-flex;align-items:center;gap:.7em;background:var(--rose);color:var(--cream);
+    border:1px solid var(--rose);border-radius:40px;padding:15px 28px;font-size:.64rem;letter-spacing:.2em;
+    text-transform:uppercase;cursor:pointer;transition:.4s var(--ease)}
+  .kofi-btn .cup{font-size:1rem;line-height:1}
+  .kofi-btn .arr{transition:transform .4s var(--ease)}
+  .kofi-btn:hover{background:transparent;color:var(--ink);border-color:var(--ink)}
+  .kofi-btn:hover .arr{transform:translate(4px,-4px)}
+  .donate-free{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+
   /* ---------- roadmap ---------- */
   .road-intro{max-width:62ch;font-size:1rem;color:var(--text);margin-bottom:14px}
   .road-intro + .road-intro{margin-top:14px}
@@ -227,6 +261,7 @@
       <a href="#maths">Maths</a>
       <a href="#ds">Data Science</a>
       <a href="#dl">Deep Learning</a>
+      <a href="#donate">Support</a>
       <a class="back" href="index.html"><span class="arr">←</span>Portfolio</a>
     </div>
   </div>
@@ -249,7 +284,7 @@
         <p class="lede" style="margin-top:22px">Maths <span class="accent">//</span> Data Science <span class="accent">//</span> Deep Learning</p>
       </div>
       <div>
-        <p class="lede">This isn't a course that hands you everything. It's a <b>map</b>. The real teaching is done by the best free resources on the internet — I just put them in the right order and explain the ideas in plain language first.</p>
+        <p class="lede">This isn't a course that hands you everything. It's a <b>map</b>. The real teaching is done by the best free resources on the internet. I just put them in the right order and explain the ideas in plain language first.</p>
         <p class="lede">No jargon for the sake of it. Every hard concept gets a simple version before anything else. And one thing matters more than any video: <b>you have to do it yourself.</b></p>
       </div>
     </div>
@@ -261,7 +296,14 @@
   <div class="wrap">
     <div class="sec-head reveal"><h2>How to <em>navigate</em> this</h2><span class="label">Start here · 00</span></div>
 
-    <p class="road-intro reveal">The order is deliberate. <b>Maths</b> first, because everything later is built on it. Then <b>data science and machine learning</b>, where those maths ideas turn into working predictions. Then <b>deep learning</b>, which is the same ideas stacked higher. Skipping ahead feels faster but it's how people get stuck — they end up copying code they can't debug.</p>
+    <div class="manifesto reveal">
+      <span class="label">Why this matters most</span>
+      <p>The real thing a degree gives you isn't the facts. It's the ability to <b>teach yourself anything,</b> for the rest of your life.</p>
+      <p>This field never stops moving. What's cutting-edge now will be ordinary in a year, so staying current isn't optional, it's the job. Learning how to learn on your own is the one skill that never goes out of date.</p>
+      <p class="sign">And this is free because I learned everything for free. Every resource on this page is one I actually used. If it was free for me, it should be free for you too. No paywall, no catch.</p>
+    </div>
+
+    <p class="road-intro reveal">The order is deliberate. <b>Maths</b> first, because everything later is built on it. Then <b>data science and machine learning</b>, where those maths ideas turn into working predictions. Then <b>deep learning</b>, which is the same ideas stacked higher. Skipping ahead feels faster but it's how people get stuck, ending up copying code they can't debug.</p>
     <p class="road-intro reveal">You don't need equal amounts of each. In practice the maths that earns its keep is roughly <b>half statistics and probability, a third linear algebra, and a smaller slice of calculus.</b> So don't burn months on calculus before you've touched a dataset.</p>
 
     <div class="pull reveal">The resources teach. This page only tells you <b>what to learn, in what order,</b> and why it matters.</div>
@@ -270,7 +312,7 @@
       <div class="step">
         <div class="s-idx">PHASE 01</div>
         <h4>The <em>maths</em></h4>
-        <p>The language underneath everything. Start with statistics and basic algebra, build up gradually. You'll come back here often — that's normal.</p>
+        <p>The language underneath everything. Start with statistics and basic algebra, build up gradually. You'll come back here often, and that's normal.</p>
         <div class="arrow">Then <b>→</b> data science</div>
       </div>
       <div class="step">
@@ -282,7 +324,7 @@
       <div class="step">
         <div class="s-idx">PHASE 03</div>
         <h4>Deep <em>learning</em></h4>
-        <p>The same machine-learning idea, stacked into layers. Neurons, then the famous models — vision, language, sequences. Powerful, but built on what came before.</p>
+        <p>The same machine-learning idea, stacked into layers. Neurons, then the famous models: vision, language, sequences. Powerful, but built on what came before.</p>
         <div class="arrow">Then <b>→</b> build your own</div>
       </div>
     </div>
@@ -292,7 +334,8 @@
       <h3>Being <em>autodidactic</em> is the whole skill</h3>
       <div class="body" style="max-width:62ch">
         <p>An autodidact is just someone who teaches themselves. It sounds intense, but it's a habit, not a talent: read or watch a little, then immediately try it with your own hands before moving on.</p>
-        <p>Watching someone else solve a problem feels like learning, but the understanding doesn't stick until <b>you</b> get stuck and work your way out. Every resource below is something to <b>use actively</b> — pause the video and code along, redo the maths on paper, break the example and fix it. The struggle is the part that teaches. If a section feels too hard, drop back one level rather than pushing through confused.</p>
+        <p>This is the habit that carries you through a whole career, not just this course. New models and tools arrive constantly, and nobody hands you a class for each one. The people who last are the ones who can pick up something new on their own, again and again.</p>
+        <p>Watching someone else solve a problem feels like learning, but the understanding doesn't stick until <b>you</b> get stuck and work your way out. Every resource below is something to <b>use actively</b>. Pause the video and code along, redo the maths on paper, break the example and fix it. The struggle is the part that teaches. If a section feels too hard, drop back one level rather than pushing through confused.</p>
       </div>
     </div>
   </div>
@@ -327,7 +370,7 @@
           <div class="t-idx">PATHWAY A · START HERE</div>
           <h3><em>Statistics</em> & probability</h3>
           <div class="body">
-            <p>The most useful maths for this whole field, and the one beginners skip. It's how you describe data, measure uncertainty, and tell a real pattern from random noise. Begin it alongside Algebra 2 — it doesn't need heavy maths to start.</p>
+            <p>The most useful maths for this whole field, and the one beginners skip. It's how you describe data, measure uncertainty, and tell a real pattern from random noise. Begin it alongside Algebra 2, since it doesn't need heavy maths to start.</p>
             <div class="intuition">
               <span class="label">Plain version</span>
               Statistics is just <b>making honest statements about data when you can't see everything.</b> You have a sample, not the whole world, so you learn how confident you're allowed to be.
@@ -338,10 +381,10 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">statistics_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://www.khanacademy.org/math/statistics-probability" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy — Statistics & Probability <span class="free">free</span></span><span class="r-desc">Bottom-up, the place to begin. Pairs with Algebra 2.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.khanacademy.org/math/statistics-probability" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy: Statistics & Probability <span class="free">free</span></span><span class="r-desc">Bottom-up, the place to begin. Pairs with Algebra 2.</span></span><span class="r-go">↗</span></a>
             <a class="res" href="https://www.youtube.com/c/joshstarmer" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>StatQuest with Josh Starmer <span class="free">free</span></span><span class="r-desc">Stats and ML explained with humour and clear visuals. If equations scare you, start here.</span></span><span class="r-go">↗</span></a>
           </div>
-          <div class="plate-note"># do the practice problems — don't just watch.</div>
+          <div class="plate-note"># do the practice problems, don't just watch.</div>
         </div>
       </div>
     </div>
@@ -353,7 +396,7 @@
           <div class="t-idx">PATHWAY B</div>
           <h3><em>Linear</em> algebra</h3>
           <div class="body">
-            <p>Bring this in at step 03, next to Calculus 1. It's the maths of vectors and matrices — and since data is stored as grids of numbers, this is how data physically moves through every model.</p>
+            <p>Bring this in at step 03, next to Calculus 1. It's the maths of vectors and matrices, and since data is stored as grids of numbers, this is how data physically moves through every model.</p>
             <div class="intuition">
               <span class="label">Plain version</span>
               A spreadsheet is a matrix. Linear algebra is just <b>the rules for doing arithmetic on whole tables of numbers at once</b> instead of one cell at a time.
@@ -364,8 +407,8 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">linear_algebra_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://www.khanacademy.org/math/linear-algebra" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy — Linear Algebra <span class="free">free</span></span><span class="r-desc">The full grounding, worked slowly with exercises.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://www.3blue1brown.com/topics/linear-algebra" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown — Essence of Linear Algebra <span class="free">free</span></span><span class="r-desc">See what matrices actually do. Watch this to build intuition, Khan to build skill.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.khanacademy.org/math/linear-algebra" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy: Linear Algebra <span class="free">free</span></span><span class="r-desc">The full grounding, worked slowly with exercises.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.3blue1brown.com/topics/linear-algebra" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown: Essence of Linear Algebra <span class="free">free</span></span><span class="r-desc">See what matrices actually do. Watch this to build intuition, Khan to build skill.</span></span><span class="r-go">↗</span></a>
           </div>
           <div class="plate-note"># watch 3B1B for the "why", drill Khan for the "how".</div>
         </div>
@@ -390,9 +433,9 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">calculus_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://www.khanacademy.org/math/precalculus" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy — Pre-calculus <span class="free">free</span></span><span class="r-desc">Do this before Calc 1. The bridge step.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://www.khanacademy.org/math/calculus-1" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy — Calculus 1 <span class="free">free</span></span><span class="r-desc">Derivatives and rates of change — the part that matters most.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://www.3blue1brown.com/topics/calculus" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown — Essence of Calculus <span class="free">free</span></span><span class="r-desc">Makes derivatives feel obvious instead of scary.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.khanacademy.org/math/precalculus" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy: Pre-calculus <span class="free">free</span></span><span class="r-desc">Do this before Calc 1. The bridge step.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.khanacademy.org/math/calculus-1" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy: Calculus 1 <span class="free">free</span></span><span class="r-desc">Derivatives and rates of change, the part that matters most.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.3blue1brown.com/topics/calculus" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown: Essence of Calculus <span class="free">free</span></span><span class="r-desc">Makes derivatives feel obvious instead of scary.</span></span><span class="r-go">↗</span></a>
           </div>
           <div class="plate-note"># college algebra slots in here too if you need it.</div>
         </div>
@@ -406,7 +449,7 @@
   <div class="wrap">
     <div class="sec-head reveal"><h2>Data <em>science</em> & ML</h2><span class="label">Phase 02 · the practical core</span></div>
 
-    <p class="road-intro reveal" style="margin-bottom:30px">This is where most of the real work happens. Surprisingly little of the job is inventing clever algorithms — most of it is getting data, cleaning it, and applying tools that already exist. Learn it in this order.</p>
+    <p class="road-intro reveal" style="margin-bottom:30px">This is where most of the real work happens. Surprisingly little of the job is inventing clever algorithms. Most of it is getting data, cleaning it, and applying tools that already exist. Learn it in this order.</p>
 
     <!-- python + sql -->
     <div class="track reveal">
@@ -415,7 +458,7 @@
           <div class="t-idx">MODULE 01 · FOUNDATIONS</div>
           <h3>Python <em>& SQL</em></h3>
           <div class="body">
-            <p>Python is the language of this whole field. SQL is how you pull data out of databases — beginners skip it and regret it, because almost every real job touches it. Learn enough Python to be comfortable, then add SQL.</p>
+            <p>Python is the language of this whole field. SQL is how you pull data out of databases. Beginners skip it and regret it, because almost every real job touches it. Learn enough Python to be comfortable, then add SQL.</p>
             <div class="intuition">
               <span class="label">Plain version</span>
               <b>Python</b> is how you tell the computer what to do. <b>SQL</b> is how you ask a database "give me just these rows." You'll use both constantly.
@@ -426,9 +469,9 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">python_sql_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://www.w3schools.com/python/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>W3Schools — Python <span class="free">free</span></span><span class="r-desc">Run code in the browser as you read. Gentle and hands-on.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://www.w3schools.com/sql/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>W3Schools — SQL <span class="free">free</span></span><span class="r-desc">The query basics, same try-it-yourself style.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://www.kaggle.com/learn/python" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn — Python & Pandas <span class="free">free</span></span><span class="r-desc">Short, practical micro-courses with real notebooks.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.w3schools.com/python/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>W3Schools: Python <span class="free">free</span></span><span class="r-desc">Run code in the browser as you read. Gentle and hands-on.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.w3schools.com/sql/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>W3Schools: SQL <span class="free">free</span></span><span class="r-desc">The query basics, same try-it-yourself style.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.kaggle.com/learn/python" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Python & Pandas <span class="free">free</span></span><span class="r-desc">Short, practical micro-courses with real notebooks.</span></span><span class="r-go">↗</span></a>
           </div>
           <div class="plate-note"># type every example out. copy-pasting teaches nothing.</div>
         </div>
@@ -442,7 +485,7 @@
           <div class="t-idx">MODULE 02</div>
           <h3>Data <em>cleaning</em></h3>
           <div class="body">
-            <p>The unglamorous skill that quietly decides everything. Real data is messy — missing values, typos, wrong formats. A model fed bad data gives bad answers, no matter how fancy it is.</p>
+            <p>The unglamorous skill that quietly decides everything. Real data is messy: missing values, typos, wrong formats. A model fed bad data gives bad answers, no matter how fancy it is.</p>
             <div class="intuition">
               <span class="label">Plain version</span>
               <b>Garbage in, garbage out.</b> Cleaning is the boring-but-essential work of making messy data trustworthy before you ask any questions of it.
@@ -453,8 +496,8 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">data_cleaning_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://www.kaggle.com/learn/data-cleaning" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn — Data Cleaning <span class="free">free</span></span><span class="r-desc">Hands-on with the messy-data problems you'll actually hit.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://www.kaggle.com/learn/pandas" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn — Pandas <span class="free">free</span></span><span class="r-desc">The library you'll clean and reshape data with.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.kaggle.com/learn/data-cleaning" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Data Cleaning <span class="free">free</span></span><span class="r-desc">Hands-on with the messy-data problems you'll actually hit.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.kaggle.com/learn/pandas" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Pandas <span class="free">free</span></span><span class="r-desc">The library you'll clean and reshape data with.</span></span><span class="r-go">↗</span></a>
           </div>
           <div class="plate-note"># grab a messy dataset and practice on it.</div>
         </div>
@@ -468,9 +511,9 @@
           <div class="t-idx">MODULE 03 · THE BIG ONE</div>
           <h3>Machine <em>learning</em></h3>
           <div class="body">
-            <p>Here's the secret that makes all of it click, and it's worth reading twice. A machine learning model is <b>just a maths function</b> — numbers go in, a prediction comes out. "Training" is nothing more than searching for the version of that function that fits your data best.</p>
+            <p>Here's the secret that makes all of it click, and it's worth reading twice. A machine learning model is <b>just a maths function</b>. Numbers go in, a prediction comes out. "Training" is nothing more than searching for the version of that function that fits your data best.</p>
             <div class="intuition">
-              <span class="label">The core intuition — read this twice</span>
+              <span class="label">The core intuition, read this twice</span>
               Machine learning is <b>finding the best simple formula that connects your data.</b> You have inputs and known answers; the machine tweaks a formula until its outputs match the answers as closely as possible. Then you feed it new inputs and trust its prediction.
             </div>
             <div class="concepts">
@@ -483,11 +526,11 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">machine_learning_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://www.coursera.org/specializations/machine-learning-introduction" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Andrew Ng — ML Specialization <span class="free">free to audit</span></span><span class="r-desc">The gold-standard starting course. Audit it for free.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://developers.google.com/machine-learning/crash-course" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Google — ML Crash Course <span class="free">free</span></span><span class="r-desc">~15 hours, well-produced, low maths barrier.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://scikit-learn.org/stable/user_guide.html" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>scikit-learn — User Guide <span class="free">free</span></span><span class="r-desc">The built-in library you'll build real models with.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://www.kaggle.com/datasets" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle — Datasets <span class="free">free</span></span><span class="r-desc">Thousands of real datasets to practice on. Pick one you find fun.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://www.kaggle.com/learn/intro-to-machine-learning" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn — Intro to ML <span class="free">free</span></span><span class="r-desc">Train your first model in a browser notebook.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.coursera.org/specializations/machine-learning-introduction" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Andrew Ng: ML Specialization <span class="free">free to audit</span></span><span class="r-desc">The gold-standard starting course. Audit it for free.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://developers.google.com/machine-learning/crash-course" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Google: ML Crash Course <span class="free">free</span></span><span class="r-desc">~15 hours, well-produced, low maths barrier.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://scikit-learn.org/stable/user_guide.html" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>scikit-learn: User Guide <span class="free">free</span></span><span class="r-desc">The built-in library you'll build real models with.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.kaggle.com/datasets" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle: Datasets <span class="free">free</span></span><span class="r-desc">Thousands of real datasets to practice on. Pick one you find fun.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.kaggle.com/learn/intro-to-machine-learning" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Intro to ML <span class="free">free</span></span><span class="r-desc">Train your first model in a browser notebook.</span></span><span class="r-go">↗</span></a>
           </div>
           <div class="plate-note"># Ng for understanding, sklearn + Kaggle for doing.</div>
         </div>
@@ -501,7 +544,7 @@
           <div class="t-idx">MODULE 04</div>
           <h3>Data <em>ethics</em></h3>
           <div class="body">
-            <p>Models affect real people. They can inherit bias from their data and make unfair decisions at scale. Knowing how to spot and reduce that harm is part of doing this work responsibly — not an optional extra.</p>
+            <p>Models affect real people. They can inherit bias from their data and make unfair decisions at scale. Knowing how to spot and reduce that harm is part of doing this work responsibly, not an optional extra.</p>
             <div class="intuition">
               <span class="label">Plain version</span>
               A model trained on biased data will <b>repeat that bias confidently.</b> Ethics is learning to ask "who could this harm, and how would I know?" before you ship anything.
@@ -512,8 +555,8 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">data_ethics_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://www.kaggle.com/learn/intro-to-ai-ethics" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn — Intro to AI Ethics <span class="free">free</span></span><span class="r-desc">Bias, fairness and how to audit a model, hands-on.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://ethics.fast.ai/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>fast.ai — Practical Data Ethics <span class="free">free</span></span><span class="r-desc">A full free course on the real-world consequences.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.kaggle.com/learn/intro-to-ai-ethics" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Intro to AI Ethics <span class="free">free</span></span><span class="r-desc">Bias, fairness and how to audit a model, hands-on.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://ethics.fast.ai/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>fast.ai: Practical Data Ethics <span class="free">free</span></span><span class="r-desc">A full free course on the real-world consequences.</span></span><span class="r-go">↗</span></a>
           </div>
           <div class="plate-note"># the best engineers ask "should we?" not just "can we?"</div>
         </div>
@@ -527,7 +570,7 @@
           <div class="t-idx">MODULE 05</div>
           <h3>Scaling & <em>shipping</em> models</h3>
           <div class="body">
-            <p>A model sitting in a notebook on your laptop isn't finished — it has to run reliably for real users, and keep working as data grows and changes. This is the skill that separates a hobby project from an engineer's work, so it's worth touching even early.</p>
+            <p>A model sitting in a notebook on your laptop isn't finished. It has to run reliably for real users, and keep working as data grows and changes. This is the skill that separates a hobby project from an engineer's work, so it's worth touching even early.</p>
             <div class="intuition">
               <span class="label">Plain version</span>
               <b>Building the model is half the job.</b> The other half is getting it to run somewhere real, watching it so you notice when it starts going wrong, and making sure it copes when the data gets big.
@@ -538,8 +581,8 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">scaling_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://developers.google.com/machine-learning/crash-course/production-ml-systems" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Google MLCC — Production ML Systems <span class="free">free</span></span><span class="r-desc">What changes when a model leaves the notebook. Beginner-safe.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://github.com/microsoft/ML-For-Beginners" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Microsoft — ML for Beginners <span class="free">free</span></span><span class="r-desc">A gentle full curriculum that covers the real-world steps too.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://developers.google.com/machine-learning/crash-course/production-ml-systems" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Google MLCC: Production ML Systems <span class="free">free</span></span><span class="r-desc">What changes when a model leaves the notebook. Beginner-safe.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://github.com/microsoft/ML-For-Beginners" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Microsoft: ML for Beginners <span class="free">free</span></span><span class="r-desc">A gentle full curriculum that covers the real-world steps too.</span></span><span class="r-go">↗</span></a>
           </div>
           <div class="plate-note"># don't rush here. understand models first, then ship them.</div>
         </div>
@@ -553,8 +596,8 @@
   <div class="wrap">
     <div class="sec-head reveal"><h2>Deep <em>learning</em></h2><span class="label">Phase 03 · stacking it up</span></div>
 
-    <p class="road-intro reveal" style="margin-bottom:14px">One idea unlocks this entire section, so sit with it before any model name. You already know a machine learning model is just a maths function. <b>Deep learning is what happens when you stack many of those functions on top of each other</b> — the output of one becomes the input of the next, layer after layer.</p>
-    <p class="road-intro reveal">Stacking lets the model learn patterns far too complicated for a single formula. That's the whole trick. Everything famous — the vision models, the language models — is this same idea arranged in different shapes.</p>
+    <p class="road-intro reveal" style="margin-bottom:14px">One idea unlocks this entire section, so sit with it before any model name. You already know a machine learning model is just a maths function. <b>Deep learning is what happens when you stack many of those functions on top of each other</b>, so the output of one becomes the input of the next, layer after layer.</p>
+    <p class="road-intro reveal">Stacking lets the model learn patterns far too complicated for a single formula. That's the whole trick. Everything famous, from the vision models to the language models, is this same idea arranged in different shapes.</p>
 
     <!-- core concepts -->
     <div class="track reveal">
@@ -566,8 +609,8 @@
             <p>Learn these before any specific model. They're the building blocks every deep learning system shares, and they're simpler than they sound.</p>
             <div class="concepts">
               <div class="concept"><h5>Neuron</h5><p>One tiny maths function: it takes inputs, multiplies each by a <b>weight</b>, adds a <b>bias</b>, and passes on a single number. That's all a neuron is.</p></div>
-              <div class="concept"><h5>Activation function</h5><p>A small step that lets the network bend and curve instead of only drawing straight lines — so it can learn complicated patterns.</p></div>
-              <div class="concept"><h5>Layers</h5><p>Neurons lined up side by side, then stacked. The output of one layer feeds the next — functions feeding functions.</p></div>
+              <div class="concept"><h5>Activation function</h5><p>A small step that lets the network bend and curve instead of only drawing straight lines, so it can learn complicated patterns.</p></div>
+              <div class="concept"><h5>Layers</h5><p>Neurons lined up side by side, then stacked. The output of one layer feeds the next: functions feeding functions.</p></div>
               <div class="concept"><h5>Backpropagation</h5><p>How the network learns from mistakes: it traces the error backwards and nudges every weight a little in the direction that reduces it. Repeat millions of times.</p></div>
             </div>
           </div>
@@ -576,9 +619,9 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">core_concepts_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://www.3blue1brown.com/topics/neural-networks" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown — Neural Networks <span class="free">free</span></span><span class="r-desc">The single best visual explanation of neurons and backprop. Watch first.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Andrej Karpathy — Zero to Hero <span class="free">free</span></span><span class="r-desc">Build a neural net from scratch, line by line. Code along — don't just watch.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://www.deeplearning.ai/courses/deep-learning-specialization/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Andrew Ng — Deep Learning Specialization <span class="free">free to audit</span></span><span class="r-desc">The structured course once the intuition has landed.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.3blue1brown.com/topics/neural-networks" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown: Neural Networks <span class="free">free</span></span><span class="r-desc">The single best visual explanation of neurons and backprop. Watch first.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Andrej Karpathy: Zero to Hero <span class="free">free</span></span><span class="r-desc">Build a neural net from scratch, line by line. Code along, don't just watch.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.deeplearning.ai/courses/deep-learning-specialization/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Andrew Ng: Deep Learning Specialization <span class="free">free to audit</span></span><span class="r-desc">The structured course once the intuition has landed.</span></span><span class="r-go">↗</span></a>
           </div>
           <div class="plate-note"># this is the foundation. everything below is a variation of it.</div>
         </div>
@@ -592,7 +635,7 @@
           <div class="t-idx">MODULE 02 · MODEL FAMILY</div>
           <h3>Vision models <em>(CNNs)</em></h3>
           <div class="body">
-            <p>The models that see. They're built for images, where what matters is the pattern in a patch of nearby pixels — an edge, a corner, eventually a face.</p>
+            <p>The models that see. They're built for images, where what matters is the pattern in a patch of nearby pixels: an edge, a corner, eventually a face.</p>
             <div class="intuition">
               <span class="label">Plain version</span>
               A CNN <b>scans an image in small tiles</b> looking for little patterns, then combines them into bigger ones. Early layers spot edges; later layers spot whole objects.
@@ -603,8 +646,8 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">vision_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://course.fast.ai/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>fast.ai — Practical Deep Learning <span class="free">free</span></span><span class="r-desc">You train a working image classifier in lesson one. Build-first teaching.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://cs231n.github.io/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Stanford CS231n — Notes <span class="free">free</span></span><span class="r-desc">The classic deep dive on CNNs when you want more depth.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://course.fast.ai/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>fast.ai: Practical Deep Learning <span class="free">free</span></span><span class="r-desc">You train a working image classifier in lesson one. Build-first teaching.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://cs231n.github.io/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Stanford CS231n: Notes <span class="free">free</span></span><span class="r-desc">The classic deep dive on CNNs when you want more depth.</span></span><span class="r-go">↗</span></a>
           </div>
           <div class="plate-note"># MNIST digits is the traditional first vision project.</div>
         </div>
@@ -618,7 +661,7 @@
           <div class="t-idx">MODULE 03 · MODEL FAMILY</div>
           <h3>Sequence models <em>(RNNs & LSTMs)</em></h3>
           <div class="body">
-            <p>Models for data where order matters — text, speech, time series. They read one step at a time and carry a little memory of what came before.</p>
+            <p>Models for data where order matters: text, speech, time series. They read one step at a time and carry a little memory of what came before.</p>
             <div class="intuition">
               <span class="label">Plain version</span>
               These models <b>remember the previous steps</b> as they read, the way you hold the start of a sentence in mind to understand its end.
@@ -629,10 +672,10 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">sequence_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://www.youtube.com/watch?v=AsNTP8Kwu80" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>StatQuest — RNNs & LSTMs <span class="free">free</span></span><span class="r-desc">Clear, beginner-paced explanation of memory in networks.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>colah's blog — Understanding LSTMs <span class="free">free</span></span><span class="r-desc">The famous illustrated write-up. Still the best read on the topic.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.youtube.com/watch?v=AsNTP8Kwu80" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>StatQuest: RNNs & LSTMs <span class="free">free</span></span><span class="r-desc">Clear, beginner-paced explanation of memory in networks.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>colah's blog: Understanding LSTMs <span class="free">free</span></span><span class="r-desc">The famous illustrated write-up. Still the best read on the topic.</span></span><span class="r-go">↗</span></a>
           </div>
-          <div class="plate-note"># learn these before transformers — they set up the problem.</div>
+          <div class="plate-note"># learn these before transformers, they set up the problem.</div>
         </div>
       </div>
     </div>
@@ -647,7 +690,7 @@
             <p>The architecture behind modern language models and most of today's AI. Instead of reading strictly step by step, a transformer looks at all the words at once and learns which ones to pay attention to.</p>
             <div class="intuition">
               <span class="label">Plain version</span>
-              A transformer reads everything at once and asks, for each word, <b>"which other words should I pay attention to here?"</b> That ability to weigh relationships is what makes it so powerful — and it's still just stacked maths functions.
+              A transformer reads everything at once and asks, for each word, <b>"which other words should I pay attention to here?"</b> That ability to weigh relationships is what makes it so powerful, and it's still just stacked maths functions.
             </div>
           </div>
           <div class="tagrow"><span class="tag">Attention</span><span class="tag">Language models</span><span class="tag">Embeddings</span><span class="tag">LLMs</span></div>
@@ -655,12 +698,31 @@
         <div class="plate">
           <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">transformer_resources.md</div></div>
           <div class="p-body">
-            <a class="res" href="https://www.youtube.com/watch?v=wjZofJX0v4M" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown — But what is a GPT? <span class="free">free</span></span><span class="r-desc">Visual intro to transformers and attention. Start here.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.youtube.com/watch?v=wjZofJX0v4M" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown: But what is a GPT? <span class="free">free</span></span><span class="r-desc">Visual intro to transformers and attention. Start here.</span></span><span class="r-go">↗</span></a>
             <a class="res" href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>The Illustrated Transformer <span class="free">free</span></span><span class="r-desc">The classic picture-by-picture walkthrough of the architecture.</span></span><span class="r-go">↗</span></a>
-            <a class="res" href="https://huggingface.co/learn/nlp-course" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Hugging Face — NLP Course <span class="free">free</span></span><span class="r-desc">Build and use real transformer models with code.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://huggingface.co/learn/nlp-course" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Hugging Face: NLP Course <span class="free">free</span></span><span class="r-desc">Build and use real transformer models with code.</span></span><span class="r-go">↗</span></a>
           </div>
           <div class="plate-note"># this is the current frontier. you got here from neurons.</div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DONATIONS ============ -->
+<section id="donate" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>If it <em>helped</em></h2><span class="label">Optional · pay it forward</span></div>
+    <div class="donate-box reveal">
+      <div>
+        <h3>This is, and always will be, <em>free</em></h3>
+        <p>I built this because everything I learned, I learned for free. There's no paywall coming, and you never have to give a thing to use any of it.</p>
+        <p>But if it helped you, and only if you can comfortably spare it, a small tip helps me keep making free things and keeps learning accessible for the next person. <b>Completely optional. No pressure, no hard feelings.</b></p>
+      </div>
+      <div class="donate-side">
+        <div class="donate-note">"Let's make learning accessible to encourage our youth to be educated."</div>
+        <a class="kofi-btn" href="https://ko-fi.com/lachinemearningiris" target="_blank" rel="noopener"><span class="cup">☕</span> Tip on Ko-fi <span class="arr">↗</span></a>
+        <span class="donate-free">No account needed · tip any amount</span>
       </div>
     </div>
   </div>
@@ -673,13 +735,13 @@
       <span class="label">One last thing</span>
       <h2 class="c-head serif">Now go and <em>build</em> something.</h2>
     </div>
-    <p class="road-intro reveal" style="margin-bottom:36px">You don't need to finish every resource before you start making things. Learn a little, build a small project, get stuck, look it up, keep going. That loop — not any single course — is what turns you into someone who can do this. Questions, or want to share what you've built?</p>
+    <p class="road-intro reveal" style="margin-bottom:36px">You don't need to finish every resource before you start making things. Learn a little, build a small project, get stuck, look it up, keep going. That loop, not any single course, is what turns you into someone who can do this. Questions, or want to share what you've built?</p>
     <div class="links reveal">
       <a class="lk" href="https://www.tiktok.com/@lachinemearning.com" target="_blank" rel="noopener">
-        <div><div class="plat">TikTok — more explainers</div><div class="handle">@lachinemearning.com</div></div><span class="arr">↗</span>
+        <div><div class="plat">TikTok, more explainers</div><div class="handle">@lachinemearning.com</div></div><span class="arr">↗</span>
       </a>
       <a class="lk" href="https://github.com/cat7enthusiast" target="_blank" rel="noopener">
-        <div><div class="plat">GitHub — see the work</div><div class="handle">cat7enthusiast</div></div><span class="arr">↗</span>
+        <div><div class="plat">GitHub, see the work</div><div class="handle">cat7enthusiast</div></div><span class="arr">↗</span>
       </a>
       <a class="lk" href="index.html">
         <div><div class="plat">Back to</div><div class="handle">the portfolio</div></div><span class="arr">←</span>
@@ -699,7 +761,7 @@
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
 
-  /* typewriter — mirrors the portfolio hero */
+  /* typewriter, mirrors the portfolio hero */
   const words=["Start with the maths.","Touch data science.","Reach deep learning.","Teach it to yourself."];
   const typed=document.getElementById('typed');
   let wi=0,ci=0,del=false;
@@ -711,10 +773,9 @@
     else{del=false;wi=(wi+1)%words.length;setTimeout(tw,300);}
   })();
 
-  /* gentle scroll reveals — same pattern as portfolio */
+  /* gentle scroll reveals, same pattern as portfolio */
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
 </body>
 </html>
-
