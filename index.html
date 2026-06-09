@@ -181,6 +181,28 @@
     transform: scale(0.97);
   }
 
+  /* ---------- course CTA ---------- */
+  #course-cta{padding:120px 0}
+  .cta-box{border:1px solid var(--line);border-radius:8px;background:rgba(26,10,10,.01);
+    padding:54px;display:grid;grid-template-columns:1.2fr .9fr;gap:48px;align-items:center;transition:.5s var(--ease)}
+  .cta-box:hover{border-color:var(--rose)}
+  @media(max-width:760px){.cta-box{grid-template-columns:1fr;gap:32px;padding:38px 30px}}
+  .cta-box h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.9rem,4.4vw,3rem);
+    line-height:1.02;color:var(--ink);margin-bottom:18px}
+  .cta-box h3 em{font-style:italic;color:var(--rose)}
+  .cta-box p{color:var(--text);font-size:.96rem;max-width:46ch}
+  .cta-box p + p{margin-top:14px}
+  .cta-tags{margin-top:24px;display:flex;flex-wrap:wrap;gap:8px}
+  .cta-side{display:flex;flex-direction:column;align-items:flex-start;gap:22px}
+  .cta-price{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(2rem,5vw,3.2rem);color:var(--ink)}
+  .cta-price b{font-style:normal;font-weight:400;color:var(--rose)}
+  .cta-btn{display:inline-flex;align-items:center;gap:.7em;background:var(--ink);color:var(--cream);
+    border:1px solid var(--ink);border-radius:40px;padding:15px 26px;font-size:.64rem;letter-spacing:.2em;
+    text-transform:uppercase;cursor:pointer;transition:.4s var(--ease)}
+  .cta-btn .arr{color:var(--rose);transition:transform .4s var(--ease)}
+  .cta-btn:hover{background:transparent;color:var(--ink)}
+  .cta-btn:hover .arr{transform:translate(4px,-4px)}
+
   /* ---------- contact ---------- */
   #contact{padding:120px 0 90px}
   .c-head{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(2.4rem,7vw,5rem);
@@ -225,6 +247,7 @@
       <a href="#top">About her</a>
       <a href="#work">What she does</a>
       <a href="#stack-sec">What she knows</a>
+      <a href="course.html">Free course</a>
       <a href="#contact">Talk to her</a>
     </div>
   </div>
@@ -301,7 +324,7 @@ res = model.<span class="f">fit</span>(disp=<span class="n">0</span>)
       <div class="plate">
         <div class="p-head">
           <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
-          <div class="p-title">bash — gcloud deploy</div>
+          <div class="p-title">bash: gcloud deploy</div>
         </div>
         <pre class="p-body">
 <span class="k">$</span> gcloud builds submit --tag gcr.io/supply-risk/engine:<span class="s">v2.1</span>
@@ -371,6 +394,24 @@ app = workflow.<span class="f">compile</span>()</pre>
   </div>
 </section>
 
+<section id="course-cta">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>A <em>free</em> course</h2><span class="label">Teach yourself ML</span></div>
+    <div class="cta-box reveal">
+      <div>
+        <h3>From zero to <em>deep learning</em>, the autodidact's way</h3>
+        <p>A guided map through the maths, data science, and deep learning you actually need, paired with the best free resources on the internet, in the right order.</p>
+        <p>No jargon, no paywall. Built for complete beginners who want to learn it for themselves.</p>
+        <div class="cta-tags"><span class="tag">Mathematics</span><span class="tag">Data Science</span><span class="tag">Deep Learning</span><span class="tag">Curated resources</span></div>
+      </div>
+      <div class="cta-side">
+        <div class="cta-price"><b>£0</b>, always</div>
+        <a class="cta-btn" href="course.html">Open the course <span class="arr">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="contact">
   <div class="wrap">
     <div class="reveal">
@@ -385,7 +426,7 @@ app = workflow.<span class="f">compile</span>()</pre>
         <div><div class="plat">TikTok</div><div class="handle">@lachinemearning.com</div></div><span class="arr">↗</span>
       </a>
       <button class="lk" id="discordBtn">
-        <div><div class="plat">Discord <span class="copy-note">— tap to copy</span></div><div class="handle">irtificialantelligence</div></div><span class="arr">⧉</span>
+        <div><div class="plat">Discord <span class="copy-note">tap to copy</span></div><div class="handle">irtificialantelligence</div></div><span class="arr">⧉</span>
       </button>
     </div>
   </div>
