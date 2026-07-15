@@ -9,269 +9,370 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Hanken+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <style>
   :root{
-    --cream:#EFECE5;       /* warm paper */
-    --ink:#1A0A0A;         /* accent / text */
-    --text:#3C3032;        /* soft body ink */
-    --muted:#9B928A;       /* labels */
-    --rose:#E8729A;        /* sparing accent s*/
-    --line:rgba(26,10,10,.14);
-    --line-2:rgba(26,10,10,.08);
+    --bg:#17161C;          /* dark grey ground */
+    --bg-2:#211F29;        /* raised dark */
+    --panelbg:rgba(20,19,26,.94);
+    --ink:#F4F2F8;         /* white text */
+    --text:#C9C4D4;        /* soft body */
+    --muted:#7E7890;       /* labels */
+    --rose:#B14EFF;        /* vibrant purple accent */
+    --rose-soft:#8B5CF6;
+    --line:rgba(244,242,248,.16);
+    --line-2:rgba(244,242,248,.08);
+    --glow:0 0 10px rgba(177,78,255,.55);
     --maxw:1180px;
     --ease:cubic-bezier(.16,1,.3,1);
-    
+
     /* Code Viewer Themes */
-    --code-bg: #141111;
-    --code-kw: #E8729A;
+    --code-bg: #0E0D13;
+    --code-kw: #B14EFF;
     --code-str: #A3B899;
     --code-txt: #D4CFC9;
     --code-num: #8FA1B3;
     --code-fn: #7FB4CA;
   }
+  /* ---------- light mode : the original cream / ink / rose scheme ---------- */
+  body.light{
+    --bg:#EFECE5;
+    --bg-2:#E4DFD3;
+    --panelbg:rgba(239,236,229,.95);
+    --ink:#1A0A0A;
+    --text:#3C3032;
+    --muted:#9B928A;
+    --rose:#E8729A;
+    --rose-soft:#E8729A;
+    --line:rgba(26,10,10,.14);
+    --line-2:rgba(26,10,10,.08);
+    --glow:0 0 10px rgba(232,114,154,.4);
+  }
+  body.light ::selection{background:var(--rose);color:#EFECE5}
+  body.light .paper{mix-blend-mode:multiply;opacity:.035}
+  body.light .scan{opacity:.35;background:repeating-linear-gradient(180deg, rgba(26,10,10,.02) 0 1px, transparent 1px 3px)}
+  body.light #atlas{background:radial-gradient(120% 95% at 50% 40%, #E3DED2 0%, #EFECE5 66%)}
+  body.light #atlas::after{background:radial-gradient(90% 80% at 50% 46%, transparent 60%, rgba(26,10,10,.10) 100%)}
+  body.light nav{background:rgba(239,236,229,.78)}
+  body.light .hlabel{background:rgba(239,236,229,.72)}
+  body.light .panel{box-shadow:-30px 0 80px rgba(26,10,10,.18)}
+  body.light .stack-card{background:rgba(26,10,10,.02)}
+  body.light .stack-card.highlight{background:#EFECE5;box-shadow:inset 0 -2px 0 var(--rose)}
+  body.light .cta-box{background:rgba(26,10,10,.02)}
+  body.light .cta-btn{background:var(--ink);color:#EFECE5;border-color:var(--ink);box-shadow:none}
+  body.light .cta-btn .arr{color:var(--rose)}
+  body.light .cta-btn:hover{background:transparent;color:var(--ink)}
+  body.light .cta-btn:hover .arr{color:var(--rose)}
+  body.light .toast{background:var(--ink);color:#EFECE5;box-shadow:none}
+
   *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  html,body{height:100%}
   body{
-    background:var(--cream);
+    background:var(--bg);
     color:var(--text);
     font-family:"Hanken Grotesk",sans-serif;
     font-weight:300;line-height:1.65;font-size:15px;
-    overflow-x:hidden;-webkit-font-smoothing:antialiased;
+    overflow:hidden;-webkit-font-smoothing:antialiased;
   }
+  body.nofx{overflow:auto}
   a{color:inherit;text-decoration:none}
-  ::selection{background:var(--rose);color:var(--cream)}
+  ::selection{background:var(--rose);color:#0E0D13}
   button{font-family:inherit}
 
-  /* subtle paper tooth */
-  .paper{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;mix-blend-mode:multiply;
+  /* film grain, tuned for dark */
+  .paper{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  /* cyber scanlines */
+  .scan{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.5;
+    background:repeating-linear-gradient(180deg, rgba(255,255,255,.014) 0 1px, transparent 1px 3px);}
 
   .serif{font-family:"Cormorant Garamond",serif}
   .label{font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:400}
+  .mono{font-family:"JetBrains Mono",monospace}
   .accent{color:var(--rose)}
 
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 48px;position:relative;z-index:2}
-  @media(max-width:640px){.wrap{padding:0 26px}}
-
-  /* ---------- right spine ---------- */
-  .spine{position:fixed;top:0;right:0;height:100vh;width:46px;z-index:5;
-    display:flex;align-items:center;justify-content:center;border-left:1px solid var(--line);
-    background:var(--cream)}
-  .spine span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:.6rem;letter-spacing:.34em;
-    text-transform:uppercase;color:var(--muted);white-space:nowrap}
-  .spine span b{color:var(--rose);font-weight:400;margin:0 .1em}
-  @media(max-width:880px){.spine{display:none}}
-  body{padding-right:46px}
-  @media(max-width:880px){body{padding-right:0}}
+  /* ---------- Neural Atlas canvas : the site itself ---------- */
+  #atlas{
+    position:fixed;inset:0;z-index:1;
+    background:radial-gradient(120% 100% at 50% 42%, #262231 0%, #131218 62%, #0E0D13 100%);
+    cursor:grab;
+  }
+  #atlas.dragging{cursor:grabbing}
+  #atlas canvas{
+    width:100%;height:100%;display:block;
+    image-rendering:pixelated;image-rendering:crisp-edges;
+  }
+  #atlas::after{ /* vignette */
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(90% 80% at 50% 46%, transparent 55%, rgba(10,9,14,.55) 100%);
+  }
+  body.nofx #atlas{display:none}
 
   /* ---------- nav ---------- */
-  nav{position:fixed;top:0;left:0;right:46px;z-index:40;background:var(--cream);border-bottom:1px solid var(--line)}
-  @media(max-width:880px){nav{right:0}}
-  .nav-in{max-width:var(--maxw);margin:0 auto;padding:20px 48px;display:flex;align-items:center;justify-content:space-between}
-  @media(max-width:640px){.nav-in{padding:16px 26px}}
+  nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(19,18,24,.72);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line-2)}
+  .nav-in{max-width:none;margin:0 auto;padding:20px 48px;display:flex;align-items:center;justify-content:space-between}
+  @media(max-width:640px){.nav-in{padding:16px 22px}}
   .brand{font-size:.64rem;letter-spacing:.26em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:.7em}
-  .brand .mk{width:6px;height:6px;background:var(--rose);border-radius:50%}
+  .brand .mk{width:6px;height:6px;background:var(--rose);border-radius:50%;box-shadow:var(--glow)}
   .nav-links{display:flex;gap:30px;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
-  .nav-links a{position:relative;transition:color .3s}
-  .nav-links a::after{content:"";position:absolute;left:0;bottom:-5px;width:0;height:1px;background:var(--rose);transition:width .4s var(--ease)}
-  .nav-links a:hover{color:var(--ink)}
-  .nav-links a:hover::after{width:100%}
-  @media(max-width:560px){.nav-links{gap:16px;letter-spacing:.12em}}
+  .nav-links button{position:relative;background:none;border:0;color:inherit;cursor:pointer;
+    font-size:inherit;letter-spacing:inherit;text-transform:inherit;transition:color .3s;padding:0}
+  .nav-links button::after{content:"";position:absolute;left:0;bottom:-5px;width:0;height:1px;background:var(--rose);transition:width .4s var(--ease)}
+  .nav-links button:hover{color:var(--ink)}
+  .nav-links button:hover::after,.nav-links button.active::after{width:100%}
+  .nav-links button.active{color:var(--ink)}
+  @media(max-width:560px){.nav-links{gap:14px;letter-spacing:.1em}}
+  #themeBtn{display:flex;align-items:center;gap:.6em;background:none;border:1px solid var(--line);
+    border-radius:40px;color:var(--muted);cursor:pointer;padding:7px 14px;margin-left:26px;
+    font-family:"JetBrains Mono",monospace;font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;transition:.3s}
+  #themeBtn:hover{color:var(--ink);border-color:var(--rose)}
+  #themeBtn .sw{width:7px;height:7px;border-radius:50%;background:var(--rose);box-shadow:var(--glow)}
+  @media(max-width:560px){#themeBtn{padding:7px 10px;margin-left:10px}#themeBtn .txt{display:none}}
 
-  /* ---------- hero ---------- */
-  header{padding:200px 0 120px;position:relative}
-  .hero-index{font-size:.62rem;letter-spacing:.24em;color:var(--muted);margin-bottom:42px;display:flex;gap:18px;align-items:center}
-  .hero-index .bar{width:46px;height:1px;background:var(--line)}
-
-  .name-row{display:flex;align-items:flex-start;gap:18px}
-  h1.name{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(3.2rem,11vw,8.4rem);
+  /* ---------- home HUD (over the brain) ---------- */
+  #hud{position:fixed;inset:0;z-index:8;pointer-events:none;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:0 48px 44px;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+  @media(max-width:640px){#hud{padding:0 22px 30px}}
+  body.focused #hud{opacity:0;transform:translateY(10px)}
+  .hud-index{font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);
+    margin-bottom:16px;display:flex;gap:18px;align-items:center}
+  .hud-index .bar{width:46px;height:1px;background:var(--line)}
+  h1.name{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(2.6rem,7vw,5.6rem);
     line-height:.94;letter-spacing:-.01em;color:var(--ink)}
   h1.name em{font-style:italic;font-weight:300}
-  .name-tag{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rose);margin-top:1.2em;white-space:nowrap}
-
-  .type-line{margin-top:30px;font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;
-    font-size:clamp(1.3rem,3.6vw,2.1rem);color:var(--ink);min-height:1.4em}
+  .name-tag{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rose);margin-top:14px;text-shadow:var(--glow)}
+  .type-line{margin-top:16px;font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;
+    font-size:clamp(1.15rem,2.8vw,1.7rem);color:var(--ink);min-height:1.4em}
   .type-line .pre{color:var(--rose);font-style:normal;font-family:"Hanken Grotesk",sans-serif;font-size:.5em;letter-spacing:.1em;margin-right:.5em;vertical-align:.25em}
+  .hud-hint{position:absolute;right:48px;bottom:44px;text-align:right;font-family:"JetBrains Mono",monospace;
+    font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:2}
+  .hud-hint b{color:var(--rose);font-weight:400}
+  @media(max-width:760px){.hud-hint{display:none}}
 
-  .hero-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:60px;margin-top:74px;
-    border-top:1px solid var(--line);padding-top:38px}
-  @media(max-width:760px){.hero-grid{grid-template-columns:1fr;gap:38px}}
+  /* ---------- hotspot labels (project from 3D) ---------- */
+  .hlabel{position:fixed;left:0;top:0;z-index:12;transform:translate(-50%,-50%);
+    display:flex;align-items:center;gap:.7em;
+    background:rgba(19,18,24,.66);border:1px solid var(--line);border-radius:2px;
+    padding:8px 14px;cursor:pointer;
+    font-family:"JetBrains Mono",monospace;font-size:.58rem;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--ink);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    transition:opacity .35s,border-color .3s,color .3s;white-space:nowrap}
+  .hlabel .dot{width:6px;height:6px;background:var(--rose);border-radius:50%;box-shadow:var(--glow)}
+  .hlabel:hover{border-color:var(--rose)}
+  .hlabel.away{opacity:0;pointer-events:none}
+  body.focused .hlabel{opacity:0;pointer-events:none}
+  body.nofx .hlabel{display:none}
+
+  /* ---------- fallback nav when WebGL is unavailable ---------- */
+  #fallback{display:none;position:relative;z-index:5;max-width:var(--maxw);margin:0 auto;padding:140px 48px 60px}
+  body.nofx #fallback{display:block}
+  #fallback .fb-btn{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;
+    background:none;border:0;border-bottom:1px solid var(--line);padding:26px 4px;cursor:pointer;color:var(--ink);
+    font-family:"Cormorant Garamond",serif;font-size:clamp(1.4rem,3.4vw,2rem);transition:.3s}
+  #fallback .fb-btn:hover{color:var(--rose);padding-left:14px}
+  #fallback .fb-btn .arr{color:var(--rose)}
+
+  /* ---------- panels : sections open on click ---------- */
+  .panel{position:fixed;top:0;right:0;bottom:0;z-index:50;width:min(720px,100vw);
+    background:var(--panelbg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border-left:1px solid var(--line);box-shadow:-30px 0 80px rgba(8,7,12,.6);
+    transform:translateX(103%);transition:transform .65s var(--ease);
+    overflow-y:auto;overscroll-behavior:contain;padding:118px 56px 90px}
+  .panel.open{transform:none}
+  @media(max-width:640px){.panel{padding:104px 24px 70px}}
+  .panel-close{position:sticky;top:0;float:right;margin:-46px -10px 0 0;z-index:2;
+    background:none;border:1px solid var(--line);border-radius:40px;color:var(--muted);
+    font-family:"JetBrains Mono",monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
+    padding:9px 16px;cursor:pointer;transition:.3s}
+  .panel-close:hover{color:var(--ink);border-color:var(--rose)}
+  .panel .sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:20px;
+    border-top:1px solid var(--line);padding-top:20px;margin-bottom:48px}
+  .panel .sec-head h2{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.8rem,4.6vw,2.9rem);
+    line-height:1;letter-spacing:-.01em;color:var(--ink)}
+  .panel .sec-head h2 em{font-style:italic}
+
+  /* about panel */
   .meta-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px}
   .meta b{display:block;font-weight:400;color:var(--ink);font-size:.9rem;margin-top:8px}
   .disc-line{margin-top:22px;font-size:.84rem;color:var(--text)}
   .disc-line .s{color:var(--rose);margin:0 .5em}
+  .hero-grid{display:grid;grid-template-columns:1fr;gap:38px;border-top:1px solid var(--line);
+    padding-top:38px;margin-top:26px}
   .lede{color:var(--text);font-size:1rem;max-width:48ch}
   .lede + .lede{margin-top:16px}
 
-  /* ---------- section heads ---------- */
-  .pad{padding:120px 0}
-  .sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:20px;
-    border-top:1px solid var(--line);padding-top:20px;margin-bottom:64px}
-  .sec-head h2{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(2rem,5vw,3.4rem);
-    line-height:1;letter-spacing:-.01em;color:var(--ink)}
-  .sec-head h2 em{font-style:italic}
-
-  /* ---------- work ---------- */
-  .work-item{display:grid;grid-template-columns:1fr .95fr;gap:54px;align-items:center;
-    padding:56px 0;border-top:1px solid var(--line-2)}
-  .work-item:first-of-type{border-top:0}
-  .work-item.flip .txt{order:2}.work-item.flip .plate{order:1}
-  @media(max-width:960px){.work-item{grid-template-columns:1fr;gap:30px}.work-item.flip .txt,.work-item.flip .plate{order:0}}
-  .w-idx{font-size:.64rem;letter-spacing:.2em;color:var(--rose);margin-bottom:18px}
-  .work-item h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.6rem,3.6vw,2.4rem);
+  /* work items inside panel: stacked single column */
+  .work-item{display:grid;grid-template-columns:1fr;gap:26px;padding:46px 0;border-top:1px solid var(--line-2)}
+  .work-item:first-of-type{border-top:0;padding-top:0}
+  .w-idx{font-size:.64rem;letter-spacing:.2em;color:var(--rose);margin-bottom:18px;text-shadow:var(--glow)}
+  .work-item h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.5rem,3.4vw,2.1rem);
     line-height:1.04;color:var(--ink);margin-bottom:6px}
   .work-item h3 em{font-style:italic;color:var(--ink)}
-  .work-item p{color:var(--text);font-size:.94rem;margin-top:18px;max-width:54ch}
+  .work-item p{color:var(--text);font-size:.94rem;margin-top:18px;max-width:60ch}
   .tagrow{margin-top:24px;display:flex;flex-wrap:wrap;gap:8px}
   .tag{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
     border:1px solid var(--line);padding:6px 11px;border-radius:40px}
-  
-  /* Updated Interactive Plate Layout to host code windows smoothly */
-  .plate{aspect-ratio:4/3.1;border:1px solid var(--line);background:var(--code-bg);
-    display:flex;flex-direction:column;border-radius:6px;overflow:hidden;box-shadow:0 12px 34px rgba(26,10,10,.12);transition:.5s var(--ease)}
+
+  .plate{border:1px solid var(--line);background:var(--code-bg);
+    display:flex;flex-direction:column;border-radius:6px;overflow:hidden;
+    box-shadow:0 12px 34px rgba(8,7,12,.5), inset 0 0 0 1px rgba(177,78,255,.04);transition:.5s var(--ease)}
   .plate:hover{border-color:var(--rose)}
-  
-  /* Code Terminal / Editor Elements */
   .p-head{background:rgba(255,255,255,.03);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between}
   .p-dots{display:flex;gap:6px}.p-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2)}
-  .p-dot.r{background:var(--rose)}
+  .p-dot.r{background:var(--rose);box-shadow:var(--glow)}
   .p-title{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--muted);letter-spacing:0.05em}
   .p-body{flex:1;padding:18px;margin:0;overflow:auto;font-family:"JetBrains Mono",monospace;font-size:11px;line-height:1.5;color:var(--code-txt);text-align:left}
-  
-  /* Code Highlighting Syntaxes */
-  .k{color:var(--code-kw)}  /* keyword */
-  .s{color:var(--code-str)} /* string */
-  .n{color:var(--code-num)} /* numbers */
-  .f{color:var(--code-fn)}  /* functions */
-  .c{color:var(--muted);font-style:italic} /* comment */
-  .o{color:var(--rose)}     /* operator output marker */
+  .k{color:var(--code-kw)}
+  .s{color:var(--code-str)}
+  .n{color:var(--code-num)}
+  .f{color:var(--code-fn)}
+  .c{color:var(--muted);font-style:italic}
+  .o{color:var(--rose)}
 
-  /* ---------- STACK GRID & PANEL ---------- */
-  .filters{display:flex;flex-wrap:wrap;gap:24px;margin-bottom:40px;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase}
+  /* stack panel */
+  .filters{display:flex;flex-wrap:wrap;gap:22px;margin-bottom:36px;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase}
   .filters button{background:none;border:0;color:var(--muted);cursor:pointer;padding:0 0 6px;border-bottom:1px solid transparent;transition:.3s var(--ease)}
   .filters button:hover{color:var(--ink)}
   .filters button.active{color:var(--ink);border-color:var(--rose)}
-  
-  .stack-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    border-top: 1px solid var(--line);
-    padding-top: 32px;
-  }
-  .stack-card {
-    font-size: .9rem;
-    color: var(--text);
-    padding: 10px 18px;
-    border: 1px solid var(--line-2);
-    border-radius: 4px;
-    background: rgba(26,10,10,.01);
-    transition: all .4s var(--ease);
-    position: relative;
-  }
-  .stack-card.highlight {
-    color: var(--ink);
-    font-weight: 400;
-    border-color: var(--rose);
-    background: var(--cream);
-    box-shadow: inset 0 -2px 0 var(--rose);
-  }
-  .stack-card.dim {
-    opacity: .25;
-    transform: scale(0.97);
-  }
+  .stack-grid{display:flex;flex-wrap:wrap;gap:12px;border-top:1px solid var(--line);padding-top:32px}
+  .stack-card{font-size:.9rem;color:var(--text);padding:10px 18px;border:1px solid var(--line-2);
+    border-radius:4px;background:rgba(244,242,248,.03);transition:all .4s var(--ease);position:relative}
+  .stack-card.highlight{color:var(--ink);font-weight:400;border-color:var(--rose);
+    background:rgba(177,78,255,.08);box-shadow:inset 0 -2px 0 var(--rose), 0 0 14px rgba(177,78,255,.15)}
+  .stack-card.dim{opacity:.25;transform:scale(0.97)}
 
-  /* ---------- course CTA ---------- */
-  #course-cta{padding:120px 0}
-  .cta-box{border:1px solid var(--line);border-radius:8px;background:rgba(26,10,10,.01);
-    padding:54px;display:grid;grid-template-columns:1.2fr .9fr;gap:48px;align-items:center;transition:.5s var(--ease)}
+  /* course panel */
+  .cta-box{border:1px solid var(--line);border-radius:8px;background:rgba(244,242,248,.03);
+    padding:44px;display:grid;grid-template-columns:1fr;gap:32px;transition:.5s var(--ease)}
   .cta-box:hover{border-color:var(--rose)}
-  @media(max-width:760px){.cta-box{grid-template-columns:1fr;gap:32px;padding:38px 30px}}
-  .cta-box h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.9rem,4.4vw,3rem);
+  @media(max-width:640px){.cta-box{padding:34px 24px}}
+  .cta-box h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.8rem,4.2vw,2.6rem);
     line-height:1.02;color:var(--ink);margin-bottom:18px}
   .cta-box h3 em{font-style:italic;color:var(--rose)}
   .cta-box p{color:var(--text);font-size:.96rem;max-width:46ch}
   .cta-box p + p{margin-top:14px}
   .cta-tags{margin-top:24px;display:flex;flex-wrap:wrap;gap:8px}
   .cta-side{display:flex;flex-direction:column;align-items:flex-start;gap:22px}
-  .cta-price{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(2rem,5vw,3.2rem);color:var(--ink)}
-  .cta-price b{font-style:normal;font-weight:400;color:var(--rose)}
-  .cta-btn{display:inline-flex;align-items:center;gap:.7em;background:var(--ink);color:var(--cream);
-    border:1px solid var(--ink);border-radius:40px;padding:15px 26px;font-size:.64rem;letter-spacing:.2em;
-    text-transform:uppercase;cursor:pointer;transition:.4s var(--ease)}
-  .cta-btn .arr{color:var(--rose);transition:transform .4s var(--ease)}
-  .cta-btn:hover{background:transparent;color:var(--ink)}
-  .cta-btn:hover .arr{transform:translate(4px,-4px)}
+  .cta-price{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(2rem,5vw,3rem);color:var(--ink)}
+  .cta-price b{font-style:normal;font-weight:400;color:var(--rose);text-shadow:var(--glow)}
+  .cta-btn{display:inline-flex;align-items:center;gap:.7em;background:var(--rose);color:#0E0D13;
+    border:1px solid var(--rose);border-radius:40px;padding:15px 26px;font-size:.64rem;letter-spacing:.2em;
+    text-transform:uppercase;cursor:pointer;transition:.4s var(--ease);box-shadow:0 0 22px rgba(177,78,255,.35)}
+  .cta-btn .arr{color:#0E0D13;transition:transform .4s var(--ease)}
+  .cta-btn:hover{background:transparent;color:var(--rose)}
+  .cta-btn:hover .arr{color:var(--rose);transform:translate(4px,-4px)}
 
-  /* ---------- contact ---------- */
-  #contact{padding:120px 0 90px}
-  .c-head{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(2.4rem,7vw,5rem);
-    line-height:1;letter-spacing:-.01em;color:var(--ink);margin:18px 0 54px}
-  .c-head em{font-style:italic;color:var(--rose)}
+  /* contact panel */
+  .c-head{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(2.2rem,6vw,4rem);
+    line-height:1;letter-spacing:-.01em;color:var(--ink);margin:18px 0 44px}
+  .c-head em{font-style:italic;color:var(--rose);text-shadow:var(--glow)}
   .links{border-top:1px solid var(--line)}
   .lk{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;text-align:left;
     background:none;border:0;border-bottom:1px solid var(--line);padding:26px 4px;cursor:pointer;transition:.4s var(--ease)}
   .lk:hover{padding-left:18px}
   .lk .plat{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-  .lk .handle{font-family:"Cormorant Garamond",serif;font-size:clamp(1.3rem,3.4vw,1.9rem);color:var(--ink);transition:color .3s}
+  .lk .handle{font-family:"Cormorant Garamond",serif;font-size:clamp(1.2rem,3vw,1.7rem);color:var(--ink);transition:color .3s}
   .lk:hover .handle{color:var(--rose)}
   .lk .arr{color:var(--rose);font-size:1rem;transition:transform .4s var(--ease)}
   .lk:hover .arr{transform:translate(5px,-5px)}
   .copy-note{color:var(--rose);letter-spacing:.04em}
-
-  .toast{position:fixed;left:50%;bottom:34px;transform:translate(-50%,160%);z-index:60;background:var(--ink);
-    color:var(--cream);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:13px 22px;transition:transform .45s var(--ease)}
-  .toast.show{transform:translate(-50%,0)}
-
-  footer{border-top:1px solid var(--line);padding:32px 0;margin-right:0}
-  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .foot-in{margin-top:60px;border-top:1px solid var(--line);padding-top:28px;
+    display:flex;flex-direction:column;gap:8px;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
   .foot-in b{color:var(--ink);font-weight:400}
 
-  .reveal{opacity:0;transform:translateY(18px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
-  .reveal.in{opacity:1;transform:none}
-  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+  .toast{position:fixed;left:50%;bottom:34px;transform:translate(-50%,160%);z-index:80;background:var(--rose);
+    color:#0E0D13;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:13px 22px;
+    box-shadow:0 0 26px rgba(177,78,255,.45);transition:transform .45s var(--ease)}
+  .toast.show{transform:translate(-50%,0)}
+
+  /* bottom status line */
+  #status{position:fixed;left:48px;bottom:12px;z-index:9;font-family:"JetBrains Mono",monospace;
+    font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);pointer-events:none;opacity:.8}
+  #status b{color:var(--rose);font-weight:400}
+  @media(max-width:640px){#status{left:22px}}
+  body.focused #status{opacity:0}
+
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .panel.open .reveal{opacity:1;transform:none}
+  body.nofx .reveal{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .reveal{opacity:1;transform:none}
+  }
 </style>
 </head>
 <body>
 
-<div class="paper"></div>
+<script>
+  /* restore saved theme before first paint (no-ops where storage is unavailable) */
+  try { if (localStorage.getItem('ri-theme') === 'light') document.body.classList.add('light'); } catch(e){}
+</script>
 
-<aside class="spine" aria-hidden="true">
-  <span>Machine Learning <b>//</b> Data Science <b>//</b> Software Development <b>//</b> Mathematics</span>
-</aside>
+<div id="atlas" aria-hidden="false"></div>
+<div class="paper"></div>
+<div class="scan"></div>
 
 <nav>
   <div class="nav-in">
     <div class="brand"><span class="mk"></span><span>Online</span></div>
     <div class="nav-links">
-      <a href="#top">About her</a>
-      <a href="#work">What she does</a>
-      <a href="#stack-sec">What she knows</a>
-      <a href="course.html">Free course</a>
-      <a href="#contact">Talk to her</a>
+      <button data-panel="about">About her</button>
+      <button data-panel="work">What she does</button>
+      <button data-panel="stack">What she knows</button>
+      <button data-panel="course">Free course</button>
+      <button data-panel="contact">Talk to her</button>
     </div>
+    <button id="themeBtn" type="button" aria-pressed="false" title="Switch colour scheme">
+      <span class="sw"></span><span class="txt">Light mode</span>
+    </button>
   </div>
 </nav>
 
-<header id="top">
-  <div class="wrap">
-    <div class="hero-index reveal"><span>About her</span><span class="bar"></span></div>
+<!-- home HUD : name + typewriter over the brain -->
+<div id="hud">
+  <div class="hud-index"><span class="label">About her</span><span class="bar"></span></div>
+  <h1 class="name"><span id="nameLine1">Your</span> <em id="nameLine2">Name</em></h1>
+  <div class="name-tag">Data&nbsp;Scientist //  ML Engineer<br>Est. UK</div>
+  <div class="type-line"><span class="pre">→</span><span id="typed"></span></div>
+  <div class="hud-hint">
+    <b>click</b> a node to open a section<br>
+    <b>hold right-click</b> + drag to rotate the brain<br>
+    <b>scroll / pinch</b> to zoom
+  </div>
+</div>
 
-    <div class="name-row reveal">
-      <h1 class="name"><span id="nameLine1">Your</span> <em id="nameLine2">Name</em></h1>
-      <span class="name-tag">Data&nbsp;Scientist //  ML Engineer<br>Est. UK</span>
-    </div>
+<div id="status">neural atlas <b>//</b> <span id="statusMode">idle</span></div>
 
-    <div class="type-line reveal"><span class="pre">→</span><span id="typed"></span></div>
+<!-- fallback nav if WebGL is unavailable -->
+<div id="fallback">
+  <span class="label">Index</span>
+  <div style="margin-top:26px">
+    <button class="fb-btn" data-panel="about">About her <span class="arr">→</span></button>
+    <button class="fb-btn" data-panel="work">What my work consists of <span class="arr">→</span></button>
+    <button class="fb-btn" data-panel="stack">What I've worked with <span class="arr">→</span></button>
+    <button class="fb-btn" data-panel="course">A free course <span class="arr">→</span></button>
+    <button class="fb-btn" data-panel="contact">Contact &amp; media <span class="arr">→</span></button>
+  </div>
+</div>
 
-    <div class="hero-grid reveal">
-      <div class="meta">
-        <div class="meta-cols">
-          <div><span class="label">Field</span><b>Supply Chain<br>Risk Intelligence</b></div>
-          <div><span class="label">Based</span><b>United Kingdom</b></div>
-        </div>
-        <p class="disc-line">Machine Learning <span class="s">//</span> Data Science <span class="s">//</span> Software Development <span class="s">//</span> Mathematics</p>
+<!-- ============ PANELS ============ -->
+
+<section class="panel" id="panel-about" aria-hidden="true">
+  <button class="panel-close" data-close>Close ✕</button>
+  <div class="sec-head reveal"><h2>About <em>her</em></h2><span class="label">Frontal lobe</span></div>
+  <div class="reveal">
+    <div class="meta">
+      <div class="meta-cols">
+        <div><span class="label">Field</span><b>Supply Chain<br>Risk Intelligence</b></div>
+        <div><span class="label">Based</span><b>United Kingdom</b></div>
       </div>
+      <p class="disc-line">Machine Learning <span class="s">//</span> Data Science <span class="s">//</span> Software Development <span class="s">//</span> Mathematics</p>
+    </div>
+    <div class="hero-grid">
       <div>
         <p class="lede">I build AI systems that read risk out of messy supplier data; frontier models paired with classical and deep learning.</p>
         <p class="lede">Then I ship them to production: cloud pipelines, dashboards, and agentic workflows that quietly remove the redundant work.</p>
@@ -279,25 +380,25 @@
       </div>
     </div>
   </div>
-</header>
+</section>
 
-<section id="work" class="pad">
-  <div class="wrap">
-    <div class="sec-head reveal"><h2>What my work consists of</h2></div>
+<section class="panel" id="panel-work" aria-hidden="true">
+  <button class="panel-close" data-close>Close ✕</button>
+  <div class="sec-head reveal"><h2>What my work consists of</h2><span class="label">Cortex</span></div>
 
-    <div class="work-item reveal">
-      <div class="txt">
-        <div class="w-idx">RISK INTELLIGENCE</div>
-        <h3>AI <em>risk intelligence</em> for supplier portfolios</h3>
-        <p>AI systems that surface supply-chain risk hiding inside complex supplier-portfolio data. A deliberately mixed approach leveraging frontier LLMs reasoning over unstructured signals, alongside traditional statistical and deep-learning models where scale and explainability demand precision.</p>
-        <div class="tagrow"><span class="tag">Frontier LLMs</span><span class="tag">Deep Learning</span><span class="tag">Classical ML</span><span class="tag">Risk Modelling</span></div>
+  <div class="work-item reveal">
+    <div class="txt">
+      <div class="w-idx">RISK INTELLIGENCE</div>
+      <h3>AI <em>risk intelligence</em> for supplier portfolios</h3>
+      <p>AI systems that surface supply-chain risk hiding inside complex supplier-portfolio data. A deliberately mixed approach leveraging frontier LLMs reasoning over unstructured signals, alongside traditional statistical and deep-learning models where scale and explainability demand precision.</p>
+      <div class="tagrow"><span class="tag">Frontier LLMs</span><span class="tag">Deep Learning</span><span class="tag">Classical ML</span><span class="tag">Risk Modelling</span></div>
+    </div>
+    <div class="plate">
+      <div class="p-head">
+        <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
+        <div class="p-title">risk_analysis.py</div>
       </div>
-      <div class="plate">
-        <div class="p-head">
-          <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
-          <div class="p-title">risk_analysis.py</div>
-        </div>
-        <pre class="p-body"><span class="k">import</span> statsmodels.api <span class="k">as</span> sm
+      <pre class="p-body"><span class="k">import</span> statsmodels.api <span class="k">as</span> sm
 <span class="k">import</span> statsmodels.formula.api <span class="k">as</span> smf
 
 model = smf.<span class="f">logit</span>(<span class="s">"disrupted ~ cfr_score + leverage_ratio"</span>, data=df)
@@ -311,22 +412,22 @@ res = model.<span class="f">fit</span>(disp=<span class="n">0</span>)
 <span class="o">cfr_score   -0.8942      0.141     -6.342      0.000</span>
 <span class="o">leverage     0.5137      0.183      2.807      0.005</span>
 <span class="o">====================================================</span></pre>
-      </div>
     </div>
+  </div>
 
-    <div class="work-item flip reveal">
-      <div class="txt">
-        <div class="w-idx">CLOUD PIPELINES</div>
-        <h3>Production <em>data pipelines</em> on the cloud</h3>
-        <p>Data-analysis pipelines deployed on Cloud Run and orchestrated by Cloud Scheduler, so they run reliably and on time. BigQuery is the analytical warehouse; results surface as living dashboards in Looker Studio (Data Studio).</p>
-        <div class="tagrow"><span class="tag">Cloud Run</span><span class="tag">Cloud Scheduler</span><span class="tag">BigQuery</span><span class="tag">Looker Studio</span></div>
+  <div class="work-item reveal">
+    <div class="txt">
+      <div class="w-idx">CLOUD PIPELINES</div>
+      <h3>Production <em>data pipelines</em> on the cloud</h3>
+      <p>Data-analysis pipelines deployed on Cloud Run and orchestrated by Cloud Scheduler, so they run reliably and on time. BigQuery is the analytical warehouse; results surface as living dashboards in Looker Studio (Data Studio).</p>
+      <div class="tagrow"><span class="tag">Cloud Run</span><span class="tag">Cloud Scheduler</span><span class="tag">BigQuery</span><span class="tag">Looker Studio</span></div>
+    </div>
+    <div class="plate">
+      <div class="p-head">
+        <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
+        <div class="p-title">bash: gcloud deploy</div>
       </div>
-      <div class="plate">
-        <div class="p-head">
-          <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
-          <div class="p-title">bash: gcloud deploy</div>
-        </div>
-        <pre class="p-body">
+      <pre class="p-body">
 <span class="k">$</span> gcloud builds submit --tag gcr.io/supply-risk/engine:<span class="s">v2.1</span>
 
 <span class="k">$</span> gcloud run deploy risk-pipeline-service \
@@ -340,22 +441,22 @@ res = model.<span class="f">fit</span>(disp=<span class="n">0</span>)
 <span class="k">$</span> gcloud scheduler jobs create http daily-risk-evaluation \
     --schedule=<span class="s">"0 6 * * 1-5"</span> --location=europe-west2 \
     --uri=<span class="s">"https://risk-pipeline-service-uk-an.a.run.app/run"</span></pre>
-      </div>
     </div>
+  </div>
 
-    <div class="work-item reveal">
-      <div class="txt">
-        <div class="w-idx">AGENTIC SYSTEMS</div>
-        <h3>Agentic <em>automation</em> with LangGraph</h3>
-        <p>Agentic systems in LangGraph that automate the redundant, repetitive work spread across departments in supply-chain risk management; chaining tools and models into reliable workflows, so human attention is reserved for the judgement calls that need it.</p>
-        <div class="tagrow"><span class="tag">LangGraph</span><span class="tag">Agents</span><span class="tag">Workflow Automation</span><span class="tag">Cross-team Ops</span></div>
+  <div class="work-item reveal">
+    <div class="txt">
+      <div class="w-idx">AGENTIC SYSTEMS</div>
+      <h3>Agentic <em>automation</em> with LangGraph</h3>
+      <p>Agentic systems in LangGraph that automate the redundant, repetitive work spread across departments in supply-chain risk management; chaining tools and models into reliable workflows, so human attention is reserved for the judgement calls that need it.</p>
+      <div class="tagrow"><span class="tag">LangGraph</span><span class="tag">Agents</span><span class="tag">Workflow Automation</span><span class="tag">Cross-team Ops</span></div>
+    </div>
+    <div class="plate">
+      <div class="p-head">
+        <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
+        <div class="p-title">agentic_workflow.py</div>
       </div>
-      <div class="plate">
-        <div class="p-head">
-          <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
-          <div class="p-title">agentic_workflow.py</div>
-        </div>
-        <pre class="p-body"><span class="k">from</span> langgraph.graph <span class="k">import</span> StateGraph, END
+      <pre class="p-body"><span class="k">from</span> langgraph.graph <span class="k">import</span> StateGraph, END
 
 workflow = <span class="f">StateGraph</span>(SupplierState)
 
@@ -371,74 +472,65 @@ workflow.<span class="f">add_conditional_edges</span>(
     <span class="k">lambda</span> state: <span class="s">"escalate"</span> <span class="k">if</span> state[<span class="s">"score"</span>] > <span class="n">0.75</span> <span class="k">else</span> END
 )
 app = workflow.<span class="f">compile</span>()</pre>
-      </div>
     </div>
   </div>
 </section>
 
-<section id="stack-sec" class="pad">
-  <div class="wrap">
-    <div class="sec-head reveal"><h2>What I've worked with</h2><span class="label">Stack</span></div>
-    
-    <div class="filters reveal" id="filters">
-      <button class="active" data-cat="all">All</button>
-      <button data-cat="lang">Languages</button>
-      <button data-cat="llm">Agentic Workflow</button>
-      <button data-cat="sci">Scientific &amp; Data</button>
-      <button data-cat="ml">ML / DL</button>
-      <button data-cat="cloud">Cloud / MLOps</button>
-      <button data-cat="tools">Tools</button>
-    </div>
-    
-    <div id="stack-grid-container" class="stack-grid reveal"></div>
+<section class="panel" id="panel-stack" aria-hidden="true">
+  <button class="panel-close" data-close>Close ✕</button>
+  <div class="sec-head reveal"><h2>What I've worked with</h2><span class="label">Stack</span></div>
+  <div class="filters reveal" id="filters">
+    <button class="active" data-cat="all">All</button>
+    <button data-cat="lang">Languages</button>
+    <button data-cat="llm">Agentic Workflow</button>
+    <button data-cat="sci">Scientific &amp; Data</button>
+    <button data-cat="ml">ML / DL</button>
+    <button data-cat="cloud">Cloud / MLOps</button>
+    <button data-cat="tools">Tools</button>
   </div>
+  <div id="stack-grid-container" class="stack-grid reveal"></div>
 </section>
 
-<section id="course-cta">
-  <div class="wrap">
-    <div class="sec-head reveal"><h2>A <em>free</em> course</h2><span class="label">Teach yourself ML</span></div>
-    <div class="cta-box reveal">
-      <div>
-        <h3>From zero to <em>deep learning</em>, the autodidact's way</h3>
-        <p>A guided map through the maths, data science, and deep learning you actually need, paired with the best free resources on the internet, in the right order.</p>
-        <p>No jargon, no paywall. Built for complete beginners who want to learn it for themselves.</p>
-        <div class="cta-tags"><span class="tag">Mathematics</span><span class="tag">Data Science</span><span class="tag">Deep Learning</span><span class="tag">Curated resources</span></div>
-      </div>
-      <div class="cta-side">
-        <div class="cta-price"><b>£0</b>, always</div>
-        <a class="cta-btn" href="course.html">Open the course <span class="arr">→</span></a>
-      </div>
+<section class="panel" id="panel-course" aria-hidden="true">
+  <button class="panel-close" data-close>Close ✕</button>
+  <div class="sec-head reveal"><h2>A <em>free</em> course</h2><span class="label">Teach yourself ML</span></div>
+  <div class="cta-box reveal">
+    <div>
+      <h3>From zero to <em>deep learning</em>, the autodidact's way</h3>
+      <p>A guided map through the maths, data science, and deep learning you actually need, paired with the best free resources on the internet, in the right order.</p>
+      <p>No jargon, no paywall. Built for complete beginners who want to learn it for themselves.</p>
+      <div class="cta-tags"><span class="tag">Mathematics</span><span class="tag">Data Science</span><span class="tag">Deep Learning</span><span class="tag">Curated resources</span></div>
+    </div>
+    <div class="cta-side">
+      <div class="cta-price"><b>£0</b>, always</div>
+      <a class="cta-btn" href="course.html">Open the course <span class="arr">→</span></a>
     </div>
   </div>
 </section>
 
-<section id="contact">
-  <div class="wrap">
-    <div class="reveal">
-      <span class="label">Contact &amp; Media</span>
-      <h2 class="c-head serif">Let's make<br>something <em>sharp.</em></h2>
-    </div>
-    <div class="links reveal">
-      <a class="lk" href="https://github.com/cat7enthusiast" target="_blank" rel="noopener">
-        <div><div class="plat">GitHub</div><div class="handle">cat7enthusiast</div></div><span class="arr">↗</span>
-      </a>
-      <a class="lk" href="https://www.tiktok.com/@lachinemearning.com" target="_blank" rel="noopener">
-        <div><div class="plat">TikTok</div><div class="handle">@lachinemearning.com</div></div><span class="arr">↗</span>
-      </a>
-      <button class="lk" id="discordBtn">
-        <div><div class="plat">Discord <span class="copy-note">tap to copy</span></div><div class="handle">irtificialantelligence</div></div><span class="arr">⧉</span>
-      </button>
-    </div>
+<section class="panel" id="panel-contact" aria-hidden="true">
+  <button class="panel-close" data-close>Close ✕</button>
+  <div class="reveal">
+    <span class="label">Contact &amp; Media</span>
+    <h2 class="c-head serif">Let's make<br>something <em>sharp.</em></h2>
   </div>
-</section>
-
-<footer>
-  <div class="wrap foot-in">
+  <div class="links reveal">
+    <a class="lk" href="https://github.com/cat7enthusiast" target="_blank" rel="noopener">
+      <div><div class="plat">GitHub</div><div class="handle">cat7enthusiast</div></div><span class="arr">↗</span>
+    </a>
+    <a class="lk" href="https://www.tiktok.com/@lachinemearning.com" target="_blank" rel="noopener">
+      <div><div class="plat">TikTok</div><div class="handle">@lachinemearning.com</div></div><span class="arr">↗</span>
+    </a>
+    <button class="lk" id="discordBtn">
+      <div><div class="plat">Discord <span class="copy-note">tap to copy</span></div><div class="handle">irtificialantelligence</div></div><span class="arr">⧉</span>
+    </button>
+  </div>
+  <div class="foot-in reveal">
     <span>© <span id="yr"></span> <b id="footName">Ri here ! =^..^=</b></span>
     <span>Machine Learning · Data Science · Mathematics</span>
     <span class="accent">Brought to you by opus 4.8</span>
   </div>
-</footer>
+</section>
 
 <div class="toast" id="toast">Copied to clipboard</div>
 
@@ -485,10 +577,8 @@ app = workflow.<span class="f">compile</span>()</pre>
     b.addEventListener('click',()=>{
       document.querySelectorAll('#filters button').forEach(x=>x.classList.remove('active'));
       b.classList.add('active');
-      
       const selectedCat = b.dataset.cat;
       const cards = document.querySelectorAll('.stack-card');
-
       cards.forEach(card => {
         if (selectedCat === 'all') {
           card.classList.remove('highlight', 'dim');
@@ -512,9 +602,603 @@ app = workflow.<span class="f">compile</span>()</pre>
     toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800);
   });
 
-  /* gentle scroll reveals */
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
-  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  /* ---------- panel controller (works with or without WebGL) ---------- */
+  window.ATLAS = window.ATLAS || {};   // three.js layer registers hooks here
+  const statusMode = document.getElementById('statusMode');
+  let openId = null;
+
+  function panelEl(id){ return document.getElementById('panel-' + id); }
+
+  window.openPanel = function(id){
+    if (!panelEl(id)) return;
+    if (openId && openId !== id) panelEl(openId).classList.remove('open');
+    openId = id;
+    const el = panelEl(id);
+    el.classList.add('open');
+    el.setAttribute('aria-hidden','false');
+    el.scrollTop = 0;
+    document.body.classList.add('focused');
+    document.querySelectorAll('.nav-links button').forEach(b=>b.classList.toggle('active', b.dataset.panel===id));
+    statusMode.textContent = id;
+    if (window.ATLAS.focus) window.ATLAS.focus(id);
+  };
+
+  window.closePanel = function(){
+    if (!openId) return;
+    const el = panelEl(openId);
+    el.classList.remove('open');
+    el.setAttribute('aria-hidden','true');
+    openId = null;
+    document.body.classList.remove('focused');
+    document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+    statusMode.textContent = 'idle';
+    if (window.ATLAS.focus) window.ATLAS.focus(null);
+  };
+
+  document.querySelectorAll('[data-panel]').forEach(b=>{
+    b.addEventListener('click', ()=> openPanel(b.dataset.panel));
+  });
+  document.querySelectorAll('[data-close]').forEach(b=>{
+    b.addEventListener('click', closePanel);
+  });
+  document.addEventListener('keydown', e=>{ if (e.key === 'Escape') closePanel(); });
+
+  /* light / dark theme toggle */
+  const themeBtn = document.getElementById('themeBtn');
+  if (document.body.classList.contains('light')){        // restored from a previous visit
+    themeBtn.querySelector('.txt').textContent = 'Dark mode';
+    themeBtn.setAttribute('aria-pressed', 'true');
+  }
+  themeBtn.addEventListener('click', ()=>{
+    const light = document.body.classList.toggle('light');
+    themeBtn.querySelector('.txt').textContent = light ? 'Dark mode' : 'Light mode';
+    themeBtn.setAttribute('aria-pressed', String(light));
+    try { localStorage.setItem('ri-theme', light ? 'light' : 'dark'); } catch(e){}
+    if (window.ATLAS.setTheme) window.ATLAS.setTheme(light);
+  });
+</script>
+
+<script>
+/* ============================================================
+   NEURAL ATLAS v2 — the brain IS the navigation.
+   Click a glowing node to open its section.
+   Hold right-click (or touch-drag) to rotate the brain.
+   Low-poly cortex + wireframe + node/edge halo network.
+   Falls back to a plain menu if WebGL is unavailable.
+   ============================================================ */
+(function(){
+  "use strict";
+
+  var holder = document.getElementById('atlas');
+
+  function fallback(){ document.body.classList.add('nofx'); }
+  if (!holder || typeof THREE === 'undefined') { fallback(); return; }
+
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias:false, alpha:true, powerPreference:'high-performance' });
+    if (!renderer.getContext()) throw new Error('no context');
+  } catch (e) { fallback(); return; }
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var PIX = 3;
+  renderer.setPixelRatio(1);
+  renderer.setClearColor(0x000000, 0);
+  holder.appendChild(renderer.domElement);
+
+  var scene  = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
+
+  /* ---- palette ---- */
+  var C = {
+    facet:  0x2E2938,   // dark grey-violet cortex
+    violet: 0xB14EFF,   // vibrant purple
+    violet2:0x8B5CF6,
+    wire:   0x9D6BFF
+  };
+
+  /* ---- lights: cold grey key, strong purple accents, purple rim ---- */
+  var hemi = new THREE.HemisphereLight(0x8F87A6, 0x0B0A10, 0.85);
+  scene.add(hemi);
+  var key = new THREE.DirectionalLight(0xCFC9E0, 0.55);
+  key.position.set(2.4, 3.2, 3.6);
+  scene.add(key);
+  var vio = new THREE.PointLight(C.violet, 1.1, 14);
+  vio.position.set(-2.8, 1.6, 2.4);
+  scene.add(vio);
+  var rim = new THREE.DirectionalLight(C.violet2, 0.7);
+  rim.position.set(0.5, -1.0, -3.5);
+  scene.add(rim);
+
+  /* ---- deterministic value noise ---- */
+  function hash3(x,y,z){
+    var n = Math.sin(x*127.1 + y*311.7 + z*74.7) * 43758.5453123;
+    return n - Math.floor(n);
+  }
+  function vnoise(x,y,z){
+    var xi=Math.floor(x), yi=Math.floor(y), zi=Math.floor(z);
+    var xf=x-xi, yf=y-yi, zf=z-zi;
+    var u=xf*xf*(3-2*xf), v=yf*yf*(3-2*yf), w=zf*zf*(3-2*zf);
+    function h(a,b,c){ return hash3(xi+a, yi+b, zi+c); }
+    var x00=h(0,0,0)+(h(1,0,0)-h(0,0,0))*u;
+    var x10=h(0,1,0)+(h(1,1,0)-h(0,1,0))*u;
+    var x01=h(0,0,1)+(h(1,0,1)-h(0,0,1))*u;
+    var x11=h(0,1,1)+(h(1,1,1)-h(0,1,1))*u;
+    var y0=x00+(x10-x00)*v, y1=x01+(x11-x01)*v;
+    return y0+(y1-y0)*w;
+  }
+  function fbm(x,y,z){
+    return vnoise(x,y,z)*0.6 + vnoise(x*2.3,y*2.3,z*2.3)*0.28 + vnoise(x*5.1,y*5.1,z*5.1)*0.12;
+  }
+  var sstep = THREE.MathUtils.smoothstep;
+
+  /* ---- procedural brain ---- */
+  var brain = new THREE.Group();
+  scene.add(brain);
+
+  var cortexMat = new THREE.MeshStandardMaterial({
+    color: C.facet, flatShading: true, roughness: 0.82, metalness: 0.12
+  });
+
+  function buildCortex(){
+    var geo = new THREE.IcosahedronGeometry(1, 3);
+    var pos = geo.attributes.position;
+    var p = new THREE.Vector3();
+    for (var i=0; i<pos.count; i++){
+      p.fromBufferAttribute(pos, i).normalize();
+      var n = fbm(p.x*2.1 + 5.2, p.y*2.1 + 1.7, p.z*2.1);
+      var top = sstep(p.y, -0.25, 0.45);
+      var folds = Math.sin(p.z*7.0 + p.x*4.0 + n*6.0);
+      var r = 1 + (n - 0.5)*0.34 + folds*0.055*top;
+      r -= 0.15 * (1 - sstep(Math.abs(p.x), 0.03, 0.24)) * top;
+      r -= 0.08 * sstep(-p.y, 0.15, 0.85);
+      pos.setXYZ(i, p.x*1.02*r, p.y*0.85*r, p.z*1.28*r);
+    }
+    geo.computeVertexNormals();
+    return geo;
+  }
+  var cortexGeo = buildCortex();
+  brain.add(new THREE.Mesh(cortexGeo, cortexMat));
+
+  /* purple wireframe skin — the neural-mesh look */
+  var wireMat = new THREE.LineBasicMaterial({ color: C.wire, transparent: true, opacity: 0.10 });
+  (function(){
+    var wire = new THREE.LineSegments(new THREE.WireframeGeometry(cortexGeo), wireMat);
+    wire.scale.setScalar(1.004);
+    brain.add(wire);
+  })();
+
+  /* cerebellum + brainstem */
+  (function(){
+    var geo = new THREE.IcosahedronGeometry(0.42, 2);
+    var pos = geo.attributes.position;
+    var p = new THREE.Vector3();
+    for (var i=0; i<pos.count; i++){
+      p.fromBufferAttribute(pos, i).normalize();
+      var r = 1 + (vnoise(p.x*3, p.y*3+7, p.z*3) - 0.5)*0.2 + Math.sin(p.y*14)*0.05;
+      pos.setXYZ(i, p.x*1.12*r*0.42, p.y*0.72*r*0.42, p.z*0.95*r*0.42);
+    }
+    geo.computeVertexNormals();
+    var m = new THREE.Mesh(geo, cortexMat);
+    m.position.set(0, -0.52, -0.92);
+    brain.add(m);
+    var stem = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.17, 0.5, 6, 1), cortexMat);
+    stem.position.set(0, -0.72, -0.42);
+    stem.rotation.x = 0.5;
+    brain.add(stem);
+  })();
+
+  /* ---- neural-network layer: surface nodes + orbital halo nodes + edges ---- */
+  var nodes = [];   // Vector3, surface first then halo
+  var surfaceCount = 0;
+
+  (function pickSurfaceNodes(){
+    var pos = cortexGeo.attributes.position;
+    var order = [];
+    for (var i=0; i<pos.count; i++) order.push(i);
+    for (var j=order.length-1; j>0; j--){
+      var k = Math.floor(hash3(j, j*2, 7) * (j+1)) % (j+1);
+      var t = order[j]; order[j] = order[k]; order[k] = t;
+    }
+    var MIN_D2 = 0.30*0.30;
+    for (var q=0; q<order.length && nodes.length<80; q++){
+      var v = new THREE.Vector3().fromBufferAttribute(pos, order[q]).multiplyScalar(1.015);
+      var ok = true;
+      for (var s=0; s<nodes.length; s++){
+        if (v.distanceToSquared(nodes[s]) < MIN_D2){ ok = false; break; }
+      }
+      if (ok) nodes.push(v);
+    }
+    surfaceCount = nodes.length;
+  })();
+
+  (function addHaloNodes(){
+    var HALO = 46;
+    for (var i=0; i<HALO; i++){
+      var u = hash3(i*3.1, 2.2, 9.7)*2 - 1;
+      var a = hash3(i*7.7, 4.4, 1.3) * Math.PI * 2;
+      var s = Math.sqrt(Math.max(0, 1 - u*u));
+      var d = new THREE.Vector3(s*Math.cos(a), u, s*Math.sin(a));
+      var rad = 1.55 + hash3(i, 8.8, 3.3) * 0.75;
+      nodes.push(new THREE.Vector3(d.x*1.0*rad, d.y*0.85*rad, d.z*1.25*rad));
+    }
+  })();
+
+  var edges = [];
+  function tryEdge(a, b){
+    var lo = Math.min(a,b), hi = Math.max(a,b);
+    for (var e=0; e<edges.length; e++){ if (edges[e][0]===lo && edges[e][1]===hi) return; }
+    edges.push([lo, hi]);
+  }
+  (function buildEdges(){
+    var i, j;
+    // surface mesh links
+    for (i=0; i<surfaceCount; i++){
+      var best = [];
+      for (j=0; j<surfaceCount; j++){
+        if (i===j) continue;
+        var d = nodes[i].distanceTo(nodes[j]);
+        if (d < 0.72) best.push([d, j]);
+      }
+      best.sort(function(a,b){ return a[0]-b[0]; });
+      for (var k=0; k<Math.min(2, best.length); k++) tryEdge(i, best[k][1]);
+    }
+    // halo: link each orbital node to its nearest halo sibling + nearest surface node (dendrites in)
+    for (i=surfaceCount; i<nodes.length; i++){
+      var bestH = -1, bestHD = 1.35, bestS = -1, bestSD = 1.6;
+      for (j=surfaceCount; j<nodes.length; j++){
+        if (i===j) continue;
+        var dh = nodes[i].distanceTo(nodes[j]);
+        if (dh < bestHD){ bestHD = dh; bestH = j; }
+      }
+      for (j=0; j<surfaceCount; j++){
+        var ds = nodes[i].distanceTo(nodes[j]);
+        if (ds < bestSD){ bestSD = ds; bestS = j; }
+      }
+      if (bestH >= 0) tryEdge(i, bestH);
+      if (bestS >= 0) tryEdge(i, bestS);
+    }
+  })();
+
+  function pointsFrom(list, size, opacity){
+    var geo = new THREE.BufferGeometry();
+    var arr = new Float32Array(list.length*3);
+    for (var i=0; i<list.length; i++){ arr[i*3]=list[i].x; arr[i*3+1]=list[i].y; arr[i*3+2]=list[i].z; }
+    geo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+    var mat = new THREE.PointsMaterial({ color: C.violet, size: size, sizeAttenuation: false, transparent: true, opacity: opacity });
+    var pts = new THREE.Points(geo, mat);
+    brain.add(pts);
+    return mat;
+  }
+  var surfNodeMat = pointsFrom(nodes.slice(0, surfaceCount), 2, 0.85);
+  var haloNodeMat = pointsFrom(nodes.slice(surfaceCount), 3, 0.9);
+
+  var lineGeo = new THREE.BufferGeometry();
+  (function(){
+    var arr = new Float32Array(edges.length*6);
+    for (var i=0; i<edges.length; i++){
+      var a = nodes[edges[i][0]], b = nodes[edges[i][1]];
+      arr[i*6]=a.x; arr[i*6+1]=a.y; arr[i*6+2]=a.z;
+      arr[i*6+3]=b.x; arr[i*6+4]=b.y; arr[i*6+5]=b.z;
+    }
+    lineGeo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+  })();
+  var lineMat = new THREE.LineBasicMaterial({ color: C.violet, transparent: true, opacity: 0.22 });
+  brain.add(new THREE.LineSegments(lineGeo, lineMat));
+
+  /* pulses travelling the whole network */
+  var PULSES = 14;
+  var pulses = [];
+  var pulseGeo = new THREE.BufferGeometry();
+  var pulseArr = new Float32Array(PULSES*3);
+  pulseGeo.setAttribute('position', new THREE.BufferAttribute(pulseArr, 3));
+  var pulseMat = new THREE.PointsMaterial({ color: 0xD9A8FF, size: 4, sizeAttenuation: false, transparent: true, opacity: 0.95 });
+  brain.add(new THREE.Points(pulseGeo, pulseMat));
+  for (var pi=0; pi<PULSES; pi++){
+    pulses.push({ edge: Math.floor(Math.random()*edges.length), t: -Math.random()*2.0, speed: 0.55 + Math.random()*0.8 });
+  }
+  function setPulse(i, t){
+    var e = edges[pulses[i].edge];
+    var a = nodes[e[0]], b = nodes[e[1]];
+    pulseArr[i*3]   = a.x + (b.x-a.x)*t;
+    pulseArr[i*3+1] = a.y + (b.y-a.y)*t;
+    pulseArr[i*3+2] = a.z + (b.z-a.z)*t;
+  }
+  function stepPulses(dt){
+    for (var i=0; i<pulses.length; i++){
+      var p = pulses[i];
+      p.t += p.speed*dt;
+      if (p.t > 1){
+        p.edge = Math.floor(Math.random()*edges.length);
+        p.t = -Math.random()*2.0;
+        p.speed = 0.55 + Math.random()*0.8;
+      }
+      if (p.t < 0){ pulseArr[i*3]=0; pulseArr[i*3+1]=-999; pulseArr[i*3+2]=0; }
+      else setPulse(i, p.t);
+    }
+    pulseGeo.attributes.position.needsUpdate = true;
+  }
+  (function freezeInitial(){  // sensible static frame for reduced motion / first paint
+    for (var i=0; i<PULSES; i++){ pulses[i].edge = i % edges.length; setPulse(i, (i+1)/(PULSES+1)); }
+    pulseGeo.attributes.position.needsUpdate = true;
+  })();
+
+  /* ---- interactive hotspots : region anchors → panels ---- */
+  var HOTSPOTS = [
+    { id:'about',   text:'01 · About her',      anchor:[ 0.00, 0.38,  1.14] },   // frontal
+    { id:'work',    text:'02 · What she does',  anchor:[-1.06, 0.48,  0.15] },   // left cortex
+    { id:'stack',   text:'03 · What she knows', anchor:[ 1.06, 0.12, -0.18] },   // right cortex
+    { id:'course',  text:'04 · Free course',    anchor:[ 0.00, 0.96, -0.30] },   // crown
+    { id:'contact', text:'05 · Talk to her',    anchor:[ 0.00,-0.68, -0.62] }    // stem
+  ];
+  var WAY = {
+    home:    { pos:[ 0.00, 0.50,  4.60], tgt:[ 0.00,  0.00,  0.00] },
+    about:   { pos:[ 0.90, 0.75,  3.10], tgt:[ 0.10,  0.30,  0.90] },
+    work:    { pos:[-2.90, 1.10,  1.10], tgt:[-0.55,  0.40,  0.10] },
+    stack:   { pos:[ 2.90, 0.55, -0.30], tgt:[ 0.60,  0.10, -0.15] },
+    course:  { pos:[ 0.60, 2.70,  2.40], tgt:[ 0.00,  0.65, -0.20] },
+    contact: { pos:[ 0.90,-1.40, -2.70], tgt:[ 0.10, -0.55, -0.50] }
+  };
+
+  var hitTargets = [];
+  var beaconMats = [];
+  var hitMat = new THREE.MeshBasicMaterial({ visible: false });
+  var labelLayer = document.createDocumentFragment();
+  HOTSPOTS.forEach(function(h){
+    // invisible raycast collider, rotates with the brain
+    var m = new THREE.Mesh(new THREE.SphereGeometry(0.30, 8, 6), hitMat);
+    m.position.fromArray(h.anchor);
+    m.userData.panel = h.id;
+    brain.add(m);
+    hitTargets.push(m);
+    // visible beacon node at the anchor
+    var beaconMat = new THREE.MeshBasicMaterial({ color: C.violet });
+    beaconMats.push(beaconMat);
+    var beacon = new THREE.Mesh(new THREE.OctahedronGeometry(0.055, 0), beaconMat);
+    beacon.position.fromArray(h.anchor);
+    brain.add(beacon);
+    h.beacon = beacon;
+    // HTML label
+    var btn = document.createElement('button');
+    btn.className = 'hlabel';
+    btn.type = 'button';
+    btn.innerHTML = '<span class="dot"></span>' + h.text;
+    btn.addEventListener('click', function(){ window.openPanel(h.id); });
+    labelLayer.appendChild(btn);
+    h.el = btn;
+    h.world = new THREE.Vector3();
+  });
+  document.body.appendChild(labelLayer);
+
+  /* ---- camera + focus state ---- */
+  var V3 = function(a){ return new THREE.Vector3(a[0], a[1], a[2]); };
+  var wantPos = V3(WAY.home.pos), wantTgt = V3(WAY.home.tgt);
+  var camPos  = wantPos.clone(),  camTgt  = wantTgt.clone();
+  var shiftTarget = 0, shift = 0;   // pushes the brain left while a panel covers the right
+  var focused = null;
+
+  window.ATLAS.focus = function(id){
+    focused = id;
+    var w = WAY[id] || WAY.home;
+    wantPos.copy(V3(w.pos));
+    wantTgt.copy(V3(w.tgt));
+    // ease the brain back to its home orientation so the region is where the camera expects
+    targetYaw = 0; targetPitch = 0;
+    shiftTarget = (id && window.innerWidth > 720) ? 1 : 0;
+  };
+
+  /* ---- theme swap for the 3D scene (light = cream / ink / rose) ---- */
+  var THEMES = {
+    dark: {
+      facet:0x2E2938, accent:0xB14EFF, pulse:0xD9A8FF, wire:0x9D6BFF, wireO:0.10, lineO:0.22,
+      hemiSky:0x8F87A6, hemiGround:0x0B0A10, hemiI:0.85,
+      key:0xCFC9E0, keyI:0.55, pointI:1.1, rimC:0x8B5CF6, rimI:0.7
+    },
+    light: {
+      facet:0x7A6B6D, accent:0xE8729A, pulse:0xF2A9C4, wire:0xE8729A, wireO:0.08, lineO:0.16,
+      hemiSky:0xF7F2E8, hemiGround:0x241416, hemiI:0.95,
+      key:0xEFECE5, keyI:0.85, pointI:0.55, rimC:0xE8729A, rimI:0.25
+    }
+  };
+  window.ATLAS.setTheme = function(light){
+    var t = light ? THEMES.light : THEMES.dark;
+    cortexMat.color.setHex(t.facet);
+    wireMat.color.setHex(t.wire); wireMat.opacity = t.wireO;
+    hemi.color.setHex(t.hemiSky); hemi.groundColor.setHex(t.hemiGround); hemi.intensity = t.hemiI;
+    key.color.setHex(t.key); key.intensity = t.keyI;
+    vio.color.setHex(t.accent); vio.intensity = t.pointI;
+    rim.color.setHex(t.rimC); rim.intensity = t.rimI;
+    surfNodeMat.color.setHex(t.accent);
+    haloNodeMat.color.setHex(t.accent);
+    lineMat.color.setHex(t.accent); lineMat.opacity = t.lineO;
+    pulseMat.color.setHex(t.pulse);
+    for (var i=0; i<beaconMats.length; i++) beaconMats[i].color.setHex(t.accent);
+  };
+  if (document.body.classList.contains('light')) window.ATLAS.setTheme(true);   // match restored theme
+
+  /* ---- rotate: hold right-click and drag (touch: one-finger drag) ---- */
+  var targetYaw = 0, targetPitch = 0, yaw = 0, pitch = 0;
+  var dragging = false, dragMoved = 0, lastX = 0, lastY = 0;
+
+  holder.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+  holder.addEventListener('pointerdown', function(e){
+    var rotateBtn = (e.pointerType === 'touch') ? 0 : 2;   // right mouse, or touch drag
+    if (e.button !== rotateBtn) return;
+    dragging = true; dragMoved = 0;
+    lastX = e.clientX; lastY = e.clientY;
+    holder.classList.add('dragging');
+    holder.setPointerCapture(e.pointerId);
+  });
+  holder.addEventListener('pointermove', function(e){
+    if (!dragging) return;
+    var dx = e.clientX - lastX, dy = e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    dragMoved += Math.abs(dx) + Math.abs(dy);
+    targetYaw   += dx * 0.006;
+    targetPitch += dy * 0.004;
+    targetPitch = Math.max(-0.9, Math.min(0.9, targetPitch));
+  });
+  function endDrag(e){
+    if (!dragging) return;
+    dragging = false;
+    holder.classList.remove('dragging');
+  }
+  holder.addEventListener('pointerup', endDrag);
+  holder.addEventListener('pointercancel', endDrag);
+
+  /* ---- zoom: scroll wheel / two-finger pinch ---- */
+  var zoom = 1, zoomT = 1;
+  var Z_MIN = 0.5, Z_MAX = 2.6;
+  holder.addEventListener('wheel', function(e){
+    e.preventDefault();
+    zoomT *= Math.exp(e.deltaY * 0.0011);
+    zoomT = Math.max(Z_MIN, Math.min(Z_MAX, zoomT));
+  }, { passive: false });
+
+  var touches = {};
+  var pinchDist = 0;
+  holder.addEventListener('pointerdown', function(e){
+    if (e.pointerType !== 'touch') return;
+    touches[e.pointerId] = [e.clientX, e.clientY];
+    var ids = Object.keys(touches);
+    if (ids.length === 2){
+      dragging = false; holder.classList.remove('dragging');   // pinch overrides rotate
+      var a = touches[ids[0]], b = touches[ids[1]];
+      pinchDist = Math.hypot(a[0]-b[0], a[1]-b[1]);
+    }
+  });
+  holder.addEventListener('pointermove', function(e){
+    if (e.pointerType !== 'touch' || !(e.pointerId in touches)) return;
+    touches[e.pointerId] = [e.clientX, e.clientY];
+    var ids = Object.keys(touches);
+    if (ids.length === 2 && pinchDist > 0){
+      var a = touches[ids[0]], b = touches[ids[1]];
+      var d = Math.hypot(a[0]-b[0], a[1]-b[1]);
+      zoomT *= pinchDist / Math.max(1, d);
+      zoomT = Math.max(Z_MIN, Math.min(Z_MAX, zoomT));
+      pinchDist = d;
+      dragMoved = 99;                                          // a pinch is never a tap
+    }
+  });
+  function clearTouch(e){
+    if (e.pointerType !== 'touch') return;
+    delete touches[e.pointerId];
+    if (Object.keys(touches).length < 2) pinchDist = 0;
+  }
+  holder.addEventListener('pointerup', clearTouch);
+  holder.addEventListener('pointercancel', clearTouch);
+
+  /* ---- click to select a region (raycast) ---- */
+  var raycaster = new THREE.Raycaster();
+  var ndc = new THREE.Vector2();
+  holder.addEventListener('click', function(e){
+    if (dragMoved > 8) { dragMoved = 0; return; }           // it was a touch-drag, not a tap
+    ndc.x = (e.clientX / window.innerWidth) * 2 - 1;
+    ndc.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(ndc, camera);
+    var hits = raycaster.intersectObjects(hitTargets, false);
+    if (hits.length){ window.openPanel(hits[0].object.userData.panel); }
+    else if (focused){ window.closePanel(); }               // click empty space closes the panel
+  });
+
+  /* ---- subtle mouse parallax while idle ---- */
+  var mx = 0, my = 0, mxT = 0, myT = 0;
+  if (!reduceMotion){
+    window.addEventListener('pointermove', function(e){
+      if (dragging) return;
+      mxT = (e.clientX / window.innerWidth ) * 2 - 1;
+      myT = (e.clientY / window.innerHeight) * 2 - 1;
+    }, { passive: true });
+  }
+
+  /* ---- sizing / pixelation ---- */
+  var rw = 2, rh = 2;
+  function resize(){
+    rw = Math.max(2, Math.floor(window.innerWidth  / PIX));
+    rh = Math.max(2, Math.floor(window.innerHeight / PIX));
+    renderer.setSize(rw, rh, false);
+    renderer.domElement.style.width  = '100%';
+    renderer.domElement.style.height = '100%';
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  var resizePending = false;
+  window.addEventListener('resize', function(){ resizePending = true; });
+
+  /* ---- main loop ---- */
+  var running = !document.hidden;
+  var lastT = performance.now();
+  document.addEventListener('visibilitychange', function(){
+    var was = running;
+    running = !document.hidden;
+    if (running && !was){ lastT = performance.now(); requestAnimationFrame(loop); }
+  });
+
+  var camDir = new THREE.Vector3();
+  var _zv = new THREE.Vector3();
+  function updateLabels(){
+    camera.getWorldDirection(camDir);
+    for (var i=0; i<HOTSPOTS.length; i++){
+      var h = HOTSPOTS[i];
+      h.world.copy(h.beacon.position).applyMatrix4(brain.matrixWorld);
+      var facing = h.world.clone().sub(brain.position).normalize()
+                     .dot(camera.position.clone().sub(brain.position).normalize());
+      var v = h.world.clone().project(camera);
+      var visible = facing > 0.05 && v.z < 1;
+      h.el.classList.toggle('away', !visible);
+      if (visible){
+        h.el.style.left = ((v.x * 0.5 + 0.5) * window.innerWidth)  + 'px';
+        h.el.style.top  = ((-v.y * 0.5 + 0.5) * window.innerHeight - 26) + 'px';
+      }
+    }
+  }
+
+  var lerpK = reduceMotion ? 1 : 0.07;
+
+  function loop(now){
+    if (!running) return;
+    var dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now;
+    if (resizePending){ resizePending = false; resize(); }
+
+    /* gentle auto-rotation while idle (never under reduced motion, never mid-drag or focused) */
+    if (!reduceMotion && !dragging && !focused) targetYaw += dt * 0.07;
+
+    yaw   += (targetYaw   - yaw)   * (reduceMotion ? 1 : 0.09);
+    pitch += (targetPitch - pitch) * (reduceMotion ? 1 : 0.09);
+    mx += (mxT - mx) * 0.05;
+    my += (myT - my) * 0.05;
+    brain.rotation.y = yaw + (focused ? 0 : mx * 0.06);
+    brain.rotation.x = pitch + (focused ? 0 : my * 0.04);
+    brain.updateMatrixWorld();
+
+    camPos.lerp(wantPos, lerpK);
+    camTgt.lerp(wantTgt, lerpK);
+    zoom += (zoomT - zoom) * (reduceMotion ? 1 : 0.1);
+    camera.position.copy(camTgt).addScaledVector(_zv.copy(camPos).sub(camTgt), zoom);
+    camera.lookAt(camTgt);
+
+    /* slide the composition left while a panel occupies the right half */
+    shift += (shiftTarget - shift) * (reduceMotion ? 1 : 0.08);
+    if (shift > 0.001) camera.setViewOffset(rw, rh, shift * rw * 0.17, 0, rw, rh);
+    else camera.clearViewOffset();
+
+    /* beacons breathe; the network stays alive */
+    if (!reduceMotion){
+      var s = 1 + Math.sin(now * 0.004) * 0.25;
+      for (var i=0; i<HOTSPOTS.length; i++) HOTSPOTS[i].beacon.scale.setScalar(s);
+      stepPulses(dt);
+    }
+
+    updateLabels();
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
 </script>
 </body>
 </html>
