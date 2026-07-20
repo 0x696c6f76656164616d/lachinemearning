@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>From Ri import Course</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Hanken+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+  :root{
+    --bg:#17161C;
+    --bg-2:#211F29;
+    --ink:#F4F2F8;
+    --text:#C9C4D4;
+    --muted:#7E7890;
+    --rose:#B14EFF;
+    --line:rgba(244,242,248,.16);
+    --line-2:rgba(244,242,248,.08);
+    --glow:0 0 10px rgba(177,78,255,.55);
+    --halo:0 0 34px rgba(177,78,255,.10);
+    --tint:rgba(177,78,255,.07);
+    --tint-line:rgba(177,78,255,.28);
+    --card:rgba(244,242,248,.03);
+    --plate-shadow:0 12px 34px rgba(8,7,12,.5);
+    --maxw:1180px;
+    --ease:cubic-bezier(.16,1,.3,1);
+
+    --code-bg: #0E0D13;
+    --code-kw: #B14EFF;
+    --code-str: #A3B899;
+    --code-txt: #D4CFC9;
+    --code-num: #8FA1B3;
+    --code-fn: #7FB4CA;
+  }
+
+  /* ---------- light mode : the original cream / ink / rose scheme ---------- */
+  body.light{
+    --bg:#EFECE5;
+    --bg-2:#E4DFD3;
+    --ink:#1A0A0A;
+    --text:#3C3032;
+    --muted:#9B928A;
+    --rose:#E8729A;
+    --line:rgba(26,10,10,.14);
+    --line-2:rgba(26,10,10,.08);
+    --glow:0 0 10px rgba(232,114,154,.4);
+    --halo:0 0 34px rgba(232,114,154,.08);
+    --tint:rgba(232,114,154,.06);
+    --tint-line:rgba(232,114,154,.22);
+    --card:rgba(26,10,10,.01);
+    --plate-shadow:0 12px 34px rgba(26,10,10,.12);
+  }
+  body.light ::selection{background:var(--rose);color:#EFECE5}
+  body.light .paper{mix-blend-mode:multiply;opacity:.035}
+  body.light .scan{opacity:.35;background:repeating-linear-gradient(180deg, rgba(26,10,10,.02) 0 1px, transparent 1px 3px)}
+  body.light #synapse{background:radial-gradient(120% 95% at 50% 30%, #E3DED2 0%, #EFECE5 66%)}
+  body.light #synapse::after{background:radial-gradient(90% 80% at 50% 40%, transparent 60%, rgba(26,10,10,.08) 100%)}
+  body.light nav{background:rgba(239,236,229,.78)}
+  body.light .spine{background:rgba(239,236,229,.9)}
+  body.light .kofi-btn{color:#EFECE5}
+  body.light .kofi-btn:hover{color:var(--ink)}
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Hanken Grotesk",sans-serif;
+    font-weight:300;line-height:1.65;font-size:15px;
+    overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--rose);color:#0E0D13}
+  button{font-family:inherit}
+
+  .paper{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .scan{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.5;
+    background:repeating-linear-gradient(180deg, rgba(255,255,255,.014) 0 1px, transparent 1px 3px);}
+
+  /* ---------- ambient synapse field behind the page ---------- */
+  #synapse{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 95% at 50% 30%, #232030 0%, #131218 62%, #0E0D13 100%);
+  }
+  #synapse canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+  #synapse::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(90% 80% at 50% 40%, transparent 55%, rgba(10,9,14,.5) 100%);}
+  #synapse.off{display:none}
+
+  .serif{font-family:"Cormorant Garamond",serif}
+  .label{font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:400}
+  .accent{color:var(--rose)}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 48px;position:relative;z-index:2}
+  @media(max-width:640px){.wrap{padding:0 26px}}
+
+  /* ---------- right spine ---------- */
+  .spine{position:fixed;top:0;right:0;height:100vh;width:46px;z-index:5;
+    display:flex;align-items:center;justify-content:center;border-left:1px solid var(--line);
+    background:rgba(19,18,24,.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .spine span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:.6rem;letter-spacing:.34em;
+    text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  .spine span b{color:var(--rose);font-weight:400;margin:0 .1em}
+  @media(max-width:880px){.spine{display:none}}
+  body{padding-right:46px}
+  @media(max-width:880px){body{padding-right:0}}
+
+  /* ---------- nav ---------- */
+  nav{position:fixed;top:0;left:0;right:46px;z-index:40;background:rgba(19,18,24,.72);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line-2)}
+  @media(max-width:880px){nav{right:0}}
+  .nav-in{max-width:var(--maxw);margin:0 auto;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+  @media(max-width:640px){.nav-in{padding:16px 26px}}
+  .brand{font-size:.64rem;letter-spacing:.26em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:.7em}
+  .brand .mk{width:6px;height:6px;background:var(--rose);border-radius:50%;box-shadow:var(--glow)}
+  .nav-links{display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:26px;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .nav-links a{position:relative;transition:color .3s;cursor:pointer}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-5px;width:0;height:1px;background:var(--rose);transition:width .4s var(--ease)}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a:hover::after{width:100%}
+  .nav-links a.back{color:var(--ink)}
+  .nav-links a.back .arr{color:var(--rose);margin-right:.4em}
+  @media(max-width:560px){.nav-links{gap:14px;letter-spacing:.12em}}
+  #themeBtn{display:flex;align-items:center;gap:.6em;background:none;border:1px solid var(--line);
+    border-radius:40px;color:var(--muted);cursor:pointer;padding:7px 14px;
+    font-family:"JetBrains Mono",monospace;font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;transition:.3s}
+  #themeBtn:hover{color:var(--ink);border-color:var(--rose)}
+  #themeBtn .sw{width:7px;height:7px;border-radius:50%;background:var(--rose);box-shadow:var(--glow)}
+  @media(max-width:560px){#themeBtn{padding:7px 10px}#themeBtn .txt{display:none}}
+
+  /* ---------- hero ---------- */
+  header{padding:200px 0 90px;position:relative}
+  .hero-index{font-size:.62rem;letter-spacing:.24em;color:var(--muted);margin-bottom:42px;display:flex;gap:18px;align-items:center}
+  .hero-index .bar{width:46px;height:1px;background:var(--line)}
+
+  h1.name{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(3rem,10vw,7.4rem);
+    line-height:.94;letter-spacing:-.01em;color:var(--ink)}
+  h1.name em{font-style:italic;font-weight:300;color:var(--rose);text-shadow:var(--glow)}
+
+  .type-line{margin-top:30px;font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;
+    font-size:clamp(1.3rem,3.6vw,2.1rem);color:var(--ink);min-height:1.4em}
+  .type-line .pre{color:var(--rose);font-style:normal;font-family:"Hanken Grotesk",sans-serif;font-size:.5em;letter-spacing:.1em;margin-right:.5em;vertical-align:.25em}
+
+  .hero-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:60px;margin-top:64px;
+    border-top:1px solid var(--line);padding-top:38px}
+  @media(max-width:760px){.hero-grid{grid-template-columns:1fr;gap:30px}}
+  .meta-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  .meta b{display:block;font-weight:400;color:var(--ink);font-size:.9rem;margin-top:8px}
+  .lede{color:var(--text);font-size:1rem;max-width:52ch}
+  .lede + .lede{margin-top:16px}
+  .lede b{color:var(--ink);font-weight:400}
+
+  /* ---------- section heads ---------- */
+  .pad{padding:96px 0}
+  .sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:20px;
+    border-top:1px solid var(--line);padding-top:20px;margin-bottom:54px}
+  .sec-head h2{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(2rem,5vw,3.4rem);
+    line-height:1;letter-spacing:-.01em;color:var(--ink)}
+  .sec-head h2 em{font-style:italic}
+  .sec-head .label{white-space:nowrap}
+
+  /* ---------- manifesto banner ---------- */
+  .manifesto{border:1px solid var(--rose);border-radius:8px;background:var(--tint);
+    box-shadow:var(--halo);padding:38px 42px;margin-bottom:54px}
+  @media(max-width:640px){.manifesto{padding:28px 24px}}
+  .manifesto .label{color:var(--rose);margin-bottom:16px;display:block}
+  .manifesto p{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;
+    font-size:clamp(1.25rem,2.6vw,1.75rem);line-height:1.4;color:var(--ink);max-width:42ch}
+  .manifesto p + p{margin-top:18px}
+  .manifesto p b{font-style:normal;font-weight:400;color:var(--rose)}
+  .manifesto .sign{margin-top:22px;font-family:"Hanken Grotesk",sans-serif;font-style:normal;
+    font-size:.82rem;color:var(--text);max-width:60ch}
+
+  /* ---------- donation ---------- */
+  .donate-box{border:1px solid var(--line);border-radius:8px;background:var(--card);
+    padding:54px;display:grid;grid-template-columns:1.25fr .85fr;gap:48px;align-items:center;transition:.5s var(--ease)}
+  .donate-box:hover{border-color:var(--rose)}
+  @media(max-width:760px){.donate-box{grid-template-columns:1fr;gap:30px;padding:38px 30px}}
+  .donate-box h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.8rem,4.2vw,2.8rem);
+    line-height:1.04;color:var(--ink);margin-bottom:18px}
+  .donate-box h3 em{font-style:italic;color:var(--rose)}
+  .donate-box p{color:var(--text);font-size:.96rem;max-width:48ch}
+  .donate-box p + p{margin-top:14px}
+  .donate-box p b{color:var(--ink);font-weight:400}
+  .donate-side{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+  .donate-note{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.15rem;color:var(--ink);line-height:1.35}
+  .kofi-btn{display:inline-flex;align-items:center;gap:.7em;background:var(--rose);color:#0E0D13;
+    border:1px solid var(--rose);border-radius:40px;padding:15px 28px;font-size:.64rem;letter-spacing:.2em;
+    text-transform:uppercase;cursor:pointer;transition:.4s var(--ease);box-shadow:0 0 22px rgba(177,78,255,.3)}
+  .kofi-btn .cup{font-size:1rem;line-height:1}
+  .kofi-btn .arr{transition:transform .4s var(--ease)}
+  .kofi-btn:hover{background:transparent;color:var(--ink);border-color:var(--ink);box-shadow:none}
+  .kofi-btn:hover .arr{transform:translate(4px,-4px)}
+  .donate-free{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+
+  /* ---------- roadmap ---------- */
+  .road-intro{max-width:62ch;font-size:1rem;color:var(--text);margin-bottom:14px}
+  .road-intro + .road-intro{margin-top:14px}
+  .road-intro b{color:var(--ink);font-weight:400}
+  .pull{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(1.3rem,3vw,1.8rem);
+    color:var(--ink);line-height:1.3;max-width:24ch;margin:46px 0;padding-left:24px;border-left:2px solid var(--rose)}
+  .pull b{color:var(--rose);font-style:normal;font-weight:400}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+  @media(max-width:760px){.steps{grid-template-columns:1fr}}
+  .step{border:1px solid var(--line);border-radius:6px;padding:24px;background:var(--card);
+    transition:.45s var(--ease)}
+  .step:hover{border-color:var(--rose);transform:translateY(-3px);box-shadow:var(--halo)}
+  .step .s-idx{font-size:.62rem;letter-spacing:.2em;color:var(--rose);margin-bottom:14px}
+  .step h4{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:1.5rem;color:var(--ink);margin-bottom:8px}
+  .step h4 em{font-style:italic}
+  .step p{font-size:.88rem;color:var(--text)}
+  .step .arrow{margin-top:16px;color:var(--muted);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase}
+  .step .arrow b{color:var(--rose);font-weight:400}
+
+  /* ---------- track / module rows ---------- */
+  .track{padding:46px 0;border-top:1px solid var(--line-2)}
+  .track:first-of-type{border-top:0}
+  .track-grid{display:grid;grid-template-columns:1fr .95fr;gap:54px;align-items:start}
+  @media(max-width:960px){.track-grid{grid-template-columns:1fr;gap:28px}}
+  .t-idx{font-size:.64rem;letter-spacing:.2em;color:var(--rose);margin-bottom:16px;text-shadow:var(--glow)}
+  .track h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.6rem,3.6vw,2.3rem);
+    line-height:1.04;color:var(--ink);margin-bottom:6px}
+  .track h3 em{font-style:italic}
+  .track .body p{color:var(--text);font-size:.95rem;margin-top:16px;max-width:56ch}
+  .track .body p b{color:var(--ink);font-weight:400}
+  .track .intuition{margin-top:20px;padding:18px 20px;border-radius:6px;background:var(--tint);
+    border:1px solid var(--tint-line);font-size:.92rem;color:var(--text)}
+  .track .intuition .label{display:block;margin-bottom:8px;color:var(--rose)}
+  .track .intuition b{color:var(--ink);font-weight:400}
+  .tagrow{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
+  .tag{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+    border:1px solid var(--line);padding:6px 11px;border-radius:40px}
+
+  .read-link{color:var(--rose);border-bottom:1px solid currentColor;font-size:.85rem}
+
+  /* ---------- resource plate (code-window styled) ---------- */
+  .plate{border:1px solid var(--line);background:var(--code-bg);
+    display:flex;flex-direction:column;border-radius:6px;overflow:hidden;
+    box-shadow:var(--plate-shadow), inset 0 0 0 1px rgba(177,78,255,.04);transition:.5s var(--ease)}
+  .plate:hover{border-color:var(--rose)}
+  .p-head{background:rgba(255,255,255,.03);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.05);
+    display:flex;align-items:center;justify-content:space-between}
+  .p-dots{display:flex;gap:6px}.p-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2)}
+  .p-dot.r{background:var(--code-kw);box-shadow:0 0 8px rgba(177,78,255,.5)}
+  .p-title{font-family:"JetBrains Mono",monospace;font-size:10px;color:#7E7890;letter-spacing:.05em}
+  .p-body{flex:1;padding:14px 8px;font-family:"JetBrains Mono",monospace;font-size:11px;line-height:1.5;color:var(--code-txt)}
+  .res{display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:11px 12px;border-radius:5px;transition:.3s var(--ease);cursor:pointer}
+  .res:hover{background:rgba(255,255,255,.04)}
+  .res .r-main{min-width:0}
+  .res .r-name{color:var(--code-txt);font-size:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .res .r-name .pin{color:var(--code-kw)}
+  .res .r-desc{color:#7E7890;font-size:10.5px;margin-top:3px}
+  .res .r-go{color:var(--code-fn);font-size:13px;flex-shrink:0;transition:transform .35s var(--ease)}
+  .res:hover .r-go{transform:translate(4px,-4px)}
+  .res .free{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--code-str);
+    border:1px solid rgba(163,184,153,.35);padding:2px 6px;border-radius:30px}
+  .plate-note{padding:0 12px 12px;font-family:"JetBrains Mono",monospace;font-size:10px;color:#7E7890;font-style:italic}
+
+  /* ---------- sequence (khan ordered path) ---------- */
+  .seq{margin-top:18px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--card)}
+  .seq-row{display:flex;gap:16px;padding:16px 18px;border-top:1px solid var(--line-2);align-items:baseline}
+  .seq-row:first-child{border-top:0}
+  .seq-row .n{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--rose);flex-shrink:0;width:22px}
+  .seq-row .when{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);flex-shrink:0;width:84px}
+  .seq-row .what{color:var(--ink);font-size:.92rem}
+  .seq-row .what span{color:var(--text);font-size:.84rem;display:block;margin-top:2px}
+
+  /* ---------- core concepts mini grid ---------- */
+  .concepts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+  @media(max-width:640px){.concepts{grid-template-columns:1fr}}
+  .concept{border:1px solid var(--line);border-radius:6px;padding:18px 20px;background:var(--card)}
+  .concept h5{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:1.25rem;color:var(--ink);margin-bottom:6px}
+  .concept p{font-size:.86rem;color:var(--text)}
+  .concept b{color:var(--rose);font-weight:400}
+
+  /* ---------- closing / contact ---------- */
+  #close{padding:110px 0 90px}
+  .c-head{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(2.2rem,6.5vw,4.6rem);
+    line-height:1.02;letter-spacing:-.01em;color:var(--ink);margin:16px 0 40px;max-width:18ch}
+  .c-head em{font-style:italic;color:var(--rose);text-shadow:var(--glow)}
+  .links{border-top:1px solid var(--line)}
+  .lk{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;text-align:left;
+    background:none;border:0;border-bottom:1px solid var(--line);padding:24px 4px;cursor:pointer;transition:.4s var(--ease)}
+  .lk:hover{padding-left:18px}
+  .lk .plat{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .lk .handle{font-family:"Cormorant Garamond",serif;font-size:clamp(1.3rem,3.4vw,1.9rem);color:var(--ink);transition:color .3s}
+  .lk:hover .handle{color:var(--rose)}
+  .lk .arr{color:var(--rose);font-size:1rem;transition:transform .4s var(--ease)}
+  .lk:hover .arr{transform:translate(5px,-5px)}
+
+  footer{border-top:1px solid var(--line);padding:32px 0}
+  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .foot-in b{color:var(--ink);font-weight:400}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<script>
+  /* restore saved theme before first paint (no-ops where storage is unavailable) */
+  try { if (localStorage.getItem('ri-theme') === 'light') document.body.classList.add('light'); } catch(e){}
+</script>
+
+<div id="synapse" aria-hidden="true"></div>
+<div class="paper"></div>
+<div class="scan"></div>
+
+<aside class="spine" aria-hidden="true">
+  <span>Mathematics <b>//</b> Code <b>//</b> Data Science <b>//</b> Deep Learning <b>//</b> LLMs <b>//</b> Learn it yourself</span>
+</aside>
+
+<nav>
+  <div class="nav-in">
+    <div class="brand"><span class="mk"></span><span>The Free Course</span></div>
+    <div class="nav-links">
+      <a href="#roadmap">Roadmap</a>
+      <a href="#maths">Maths</a>
+      <a href="#code">Code</a>
+      <a href="#ds">Data Science</a>
+      <a href="#dl">Deep Learning</a>
+      <a href="#llms">LLMs</a>
+      <a href="#donate">Support</a>
+      <a class="back" href="index.html"><span class="arr">←</span>Portfolio</a>
+      <button id="themeBtn" type="button" aria-pressed="false" title="Switch colour scheme">
+        <span class="sw"></span><span class="txt">Light mode</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="wrap">
+    <div class="hero-index reveal"><span>A free, self-taught path into ML</span><span class="bar"></span></div>
+
+    <h1 class="name reveal">Learn it<br><em id="heroEm">yourself.</em></h1>
+
+    <div class="type-line reveal"><span class="pre">→</span><span id="typed"></span></div>
+
+    <div class="hero-grid reveal">
+      <div class="meta">
+        <div class="meta-cols">
+          <div><span class="label">Cost</span><b>Free, forever</b></div>
+          <div><span class="label">Built for</span><b>Complete beginners</b></div>
+        </div>
+        <p class="lede" style="margin-top:22px">Maths <span class="accent">//</span> Code <span class="accent">//</span> Data Science <span class="accent">//</span> Deep Learning <span class="accent">//</span> LLMs</p>
+      </div>
+      <div>
+        <p class="lede">This isn't a course that hands you everything. It's a <b>map</b>. The real teaching is done by the best free resources on the internet. I just put them in the right order and explain the ideas in plain language first.</p>
+        <p class="lede">No jargon for the sake of it. Every hard concept gets a simple version before anything else. And one thing matters more than any video: <b>you have to do it yourself.</b></p>
+        <p class="lede">Due to my busy work schedule, my progress on a detailed intuitive explanation with images will be slow, but it will be rolling release! <b>In the meantime, try to get a headstart here and I will do my best to deliver a straight forward and beginner-friendly e-book :3 </b></p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ ROADMAP ============ -->
+<section id="roadmap" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>How to <em>navigate</em> this</h2><span class="label">Start here · 00</span></div>
+
+    <div class="manifesto reveal">
+      <span class="label">Why this matters most</span>
+      <p>The real thing a degree gives you isn't the facts. It's the ability to <b>teach yourself anything,</b> for the rest of your life.</p>
+      <p>This field never stops moving. What's cutting-edge now will be ordinary in a year, so staying current isn't optional, it's the job. Learning how to learn on your own is the one skill that never goes out of date.</p>
+      <p class="sign">And this is free because I learned everything for free. Every resource on this page is one I actually used. If it was free for me, it should be free for you too. No paywall, no catch.</p>
+    </div>
+
+    <p class="road-intro reveal">The order is deliberate. <b>Maths</b> first, because everything later is built on it, with <b>code</b> running alongside it, because you can't practise any of this without being able to write a script. Then <b>data science and machine learning</b>, where those ideas turn into working predictions. Then <b>deep learning</b>, which is the same ideas stacked higher. Then <b>LLMs</b>, last on purpose. Skipping ahead feels faster but it's how people get stuck, ending up copying code they can't debug.</p>
+    <p class="road-intro reveal">You don't need equal amounts of each. In practice the maths that earns its keep is roughly <b>half statistics and probability, a third linear algebra, and a smaller slice of calculus.</b> So don't burn months on calculus before you've touched a dataset.</p>
+    <p class="road-intro reveal">Two things live somewhere people don't expect. <b>Reinforcement learning</b> sits at the end of deep learning rather than with the other machine learning methods, because anything you'd actually build with it uses a neural network. And <b>deployment</b> sits inside data science, because a model nobody can use isn't finished.</p>
+
+    <div class="pull reveal">The resources teach. This page only tells you <b>what to learn, in what order,</b> and why it matters.</div>
+
+    <div class="steps reveal">
+      <div class="step">
+        <div class="s-idx">PHASE 01</div>
+        <h4>The <em>maths</em></h4>
+        <p>The language underneath everything. Start with statistics and basic algebra, build up gradually. You'll come back here often, and that's normal.</p>
+        <div class="arrow">Alongside <b>→</b> code</div>
+      </div>
+      <div class="step">
+        <div class="s-idx">PHASE 02</div>
+        <h4>Learn to <em>code</em></h4>
+        <p>Python, properly, once. Enough to write a script, read someone else's, and work out why yours is broken. Run this in parallel with the maths.</p>
+        <div class="arrow">Then <b>→</b> data science</div>
+      </div>
+      <div class="step">
+        <div class="s-idx">PHASE 03</div>
+        <h4>Data science <em>& ML</em></h4>
+        <p>Where maths meets real data. Clean it, explore it, let a machine find the patterns, then ship the result. This is most of the actual job.</p>
+        <div class="arrow">Then <b>→</b> deep learning</div>
+      </div>
+      <div class="step">
+        <div class="s-idx">PHASE 04</div>
+        <h4>Deep <em>learning</em></h4>
+        <p>The same machine-learning idea, stacked into layers. Neurons, then vision, sequences, transformers, and finally learning from consequences.</p>
+        <div class="arrow">Then <b>→</b> LLMs</div>
+      </div>
+      <div class="step">
+        <div class="s-idx">PHASE 05</div>
+        <h4>Working with <em>LLMs</em></h4>
+        <p>The tool you'll use daily, and the one you'll build with. Prompting, the API, context and cost, then agents that use tools on your behalf.</p>
+        <div class="arrow">Then <b>→</b> build your own</div>
+      </div>
+      <div class="step">
+        <div class="s-idx">ONGOING</div>
+        <h4>Build <em>things</em></h4>
+        <p>Not a phase you reach, a habit you start on day one. Small projects, finished and put somewhere public, teach more than the next course.</p>
+        <div class="arrow">Loop <b>→</b> forever</div>
+      </div>
+    </div>
+
+    <div class="track reveal" style="margin-top:46px;border-top:1px solid var(--line);padding-top:40px">
+      <div class="t-idx">A WORD ON DOING IT YOURSELF</div>
+      <h3>Being <em>autodidactic</em> is the whole skill</h3>
+      <div class="body" style="max-width:62ch">
+        <p>An autodidact is just someone who teaches themselves. It sounds intense, but it's a habit, not a talent: read or watch a little, then immediately try it with your own hands before moving on.</p>
+        <p>This is the habit that carries you through a whole career, not just this course. New models and tools arrive constantly, and nobody hands you a class for each one. The people who last are the ones who can pick up something new on their own, again and again.</p>
+        <p>Watching someone else solve a problem feels like learning, but the understanding doesn't stick until <b>you</b> get stuck and work your way out. Every resource below is something to <b>use actively</b>. Pause the video and code along, redo the maths on paper, break the example and fix it. The struggle is the part that teaches. If a section feels too hard, drop back one level rather than pushing through confused.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MATHS ============ -->
+<section id="maths" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>The <em>mathematics</em></h2><span class="label">Phase 01 · three pathways</span></div>
+
+    <p class="road-intro reveal" style="margin-bottom:30px">Don't do these one at a time, front to back. Run them in <b>parallel</b> and build up together. Khan Academy is the spine here because it starts gently and never assumes you remember the last thing. The plan below is the exact order to climb.</p>
+
+    <a class="read-link" href="why_maths_in_ml_.pdf" target="_blank" rel="noopener">
+      Read: Why you need to understand the maths behind ML (intuitive understanding)
+    </a>
+
+    <!-- ordered khan sequence -->
+    <div class="track reveal">
+      <div class="t-idx">THE CLIMB · KHAN ACADEMY, BOTTOM-UP</div>
+      <h3>Your <em>step-by-step</em> maths path</h3>
+      <div class="seq">
+        <div class="seq-row"><span class="n">01</span><span class="when">Together</span><span class="what">Algebra 2 + High-school Statistics<span>Run both at the same time. Algebra 2 is the toolkit; stats teaches you to reason about data and chance early.</span></span></div>
+        <div class="seq-row"><span class="n">02</span><span class="when">Next</span><span class="what">Pre-calculus<span>The bridge. Functions, graphs and the ideas calculus is about to lean on.</span></span></div>
+        <div class="seq-row"><span class="n">03</span><span class="when">Together</span><span class="what">Calculus 1 + College Algebra + Linear Algebra<span>Calc 1 for how things change; College Algebra to firm up the foundations; Linear Algebra because data lives in matrices.</span></span></div>
+        <div class="seq-row"><span class="n">04</span><span class="when">Then</span><span class="what">Calculus 2<span>Deepens the calculus you'll meet again inside how models learn.</span></span></div>
+      </div>
+      <div class="tagrow">
+        <span class="tag">Free</span><span class="tag">Beginner friendly</span><span class="tag">Practice built in</span>
+      </div>
+    </div>
+
+    <!-- statistics -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">PATHWAY A · START HERE</div>
+          <h3><em>Statistics</em> & probability</h3>
+          <div class="body">
+            <p>The most useful maths for this whole field, and the one beginners skip. It's how you describe data, measure uncertainty, and tell a real pattern from random noise. Begin it alongside Algebra 2, since it doesn't need heavy maths to start.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              Statistics is just <b>making honest statements about data when you can't see everything.</b> You have a sample, not the whole world, so you learn how confident you're allowed to be.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Distributions</span><span class="tag">Mean / variance</span><span class="tag">Hypothesis testing</span><span class="tag">Confidence</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">statistics_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.khanacademy.org/math/statistics-probability" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy: Statistics & Probability <span class="free">free</span></span><span class="r-desc">Bottom-up, the place to begin. Pairs with Algebra 2.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.youtube.com/c/joshstarmer" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>StatQuest with Josh Starmer <span class="free">free</span></span><span class="r-desc">Stats and ML explained with humour and clear visuals. If equations scare you, start here.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># do the practice problems, don't just watch.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- linear algebra -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">PATHWAY B</div>
+          <h3><em>Linear</em> algebra</h3>
+          <div class="body">
+            <p>Bring this in at step 03, next to Calculus 1. It's the maths of vectors and matrices, and since data is stored as grids of numbers, this is how data physically moves through every model.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              A spreadsheet is a matrix. Linear algebra is just <b>the rules for doing arithmetic on whole tables of numbers at once</b> instead of one cell at a time.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Vectors</span><span class="tag">Matrices</span><span class="tag">Transformations</span><span class="tag">Eigenvalues</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">linear_algebra_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.khanacademy.org/math/linear-algebra" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy: Linear Algebra <span class="free">free</span></span><span class="r-desc">The full grounding, worked slowly with exercises.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.3blue1brown.com/topics/linear-algebra" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown: Essence of Linear Algebra <span class="free">free</span></span><span class="r-desc">See what matrices actually do. Watch this to build intuition, Khan to build skill.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># watch 3B1B for the "why", drill Khan for the "how".</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- calculus -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">PATHWAY C</div>
+          <h3><em>Calculus</em></h3>
+          <div class="body">
+            <p>The smallest slice of the three, so don't let it intimidate you or eat your whole schedule. Climb Pre-calc → Calc 1 → Calc 2. You mainly need the core idea behind how a model improves itself, not every technique.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              Calculus is <b>the maths of change and slopes.</b> Later, "the model is learning" really means "follow the slope downhill to make the error smaller." That's it.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Pre-calc</span><span class="tag">Derivatives</span><span class="tag">Gradients</span><span class="tag">Chain rule</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">calculus_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.khanacademy.org/math/precalculus" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy: Pre-calculus <span class="free">free</span></span><span class="r-desc">Do this before Calc 1. The bridge step.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.khanacademy.org/math/calculus-1" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Khan Academy: Calculus 1 <span class="free">free</span></span><span class="r-desc">Derivatives and rates of change, the part that matters most.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.3blue1brown.com/topics/calculus" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown: Essence of Calculus <span class="free">free</span></span><span class="r-desc">Makes derivatives feel obvious instead of scary.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># college algebra slots in here too if you need it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEARN TO CODE ============ -->
+<section id="code" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Learn to <em>code</em></h2><span class="label">Phase 02 · the other foundation</span></div>
+
+    <p class="road-intro reveal">Run this next to the maths, not after it. Maths without code is theory you can't test; code without maths is copying things you don't understand. Together they're the whole foundation.</p>
+    <p class="road-intro reveal" style="margin-bottom:30px">You are not training to be a software engineer. The bar is lower than it sounds: write a script from scratch, read someone else's and follow it, and work out why yours is broken without panicking. <b>Python is the only language you need</b>, so learn it properly here, once, and every section after this can spend its time on ideas instead of syntax.</p>
+
+    <a class="read-link" href="Guide%20to%20learning%20how%20to%20code%20in%20the%20sea%20of%20vibecoders.pdf" target="_blank" rel="noopener">
+      Read: Guide to learning how to code in the sea of vibecoders
+    </a>
+
+    <!-- fundamentals -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 01 · START HERE</div>
+          <h3>Programming <em>fundamentals</em></h3>
+          <div class="body">
+            <p>Every program ever written is made of about six ideas, and you can learn all of them in a fortnight. Pick <b>one</b> of the resources opposite and finish it end to end rather than sampling all three. Typing the examples out yourself is not optional; that's the part that builds the skill.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              A program is <b>a list of instructions the computer follows in order.</b> Variables are labelled boxes for values, conditionals choose between paths, loops repeat work, and functions are recipes you write once and reuse. Everything else is a combination of those.
+            </div>
+            <div class="concepts">
+              <div class="concept"><h5>Variables & types</h5><p>Named boxes holding numbers, text, or true/false. Most beginner bugs are <b>a value being a different type than you assumed.</b></p></div>
+              <div class="concept"><h5>Control flow</h5><p><b>If this, do that.</b> Conditionals pick a branch, loops repeat until a condition ends them. This is where the logic lives.</p></div>
+              <div class="concept"><h5>Functions</h5><p>A block of work with a name, inputs and an output. Write it once, call it anywhere. <b>Small functions are easier to fix</b> than one long script.</p></div>
+              <div class="concept"><h5>Data structures</h5><p>Lists, dictionaries, sets. Choosing the right container makes half your problems disappear before you write any logic.</p></div>
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Python</span><span class="tag">Variables</span><span class="tag">Loops</span><span class="tag">Functions</span><span class="tag">Lists & dicts</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">learn_to_code.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.w3schools.com/python/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>W3Schools: Python <span class="free">free</span></span><span class="r-desc">Run code in the browser as you read. The gentlest possible start.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://cs50.harvard.edu/python/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Harvard CS50P: Intro to Python <span class="free">free</span></span><span class="r-desc">A real university course, free, with proper problem sets. The most solid option.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://automatetheboringstuff.com/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Automate the Boring Stuff <span class="free">free</span></span><span class="r-desc">Free online book. Teaches Python by making it do useful chores for you.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>The official Python tutorial <span class="free">free</span></span><span class="r-desc">Dry, but correct. Good to keep open as a reference once you've started.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># pick one. finish it. don't collect courses.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- debugging -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 02 · THE REAL SKILL</div>
+          <h3>Debugging & <em>problem solving</em></h3>
+          <div class="body">
+            <p>Code being broken is the normal state of code. Nobody writes it correctly first time, and the gap between a beginner and a professional is mostly how calmly and quickly they find the mistake. This is a skill you can practise directly, and almost nobody does.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              An error message is <b>not noise, it's the computer telling you where it got confused.</b> Read it from the bottom up: the last lines usually name the file, the line number and the problem. Then print the values around it until reality stops matching what you assumed.
+            </div>
+            <div class="concepts">
+              <div class="concept"><h5>Read the error</h5><p>Slowly, out loud if it helps. <b>Most errors say exactly what's wrong.</b> Googling the last line verbatim solves a huge share of them.</p></div>
+              <div class="concept"><h5>Print everything</h5><p>Print the value just before the crash. Then just before that. You're <b>narrowing down where your belief and the truth split apart.</b></p></div>
+              <div class="concept"><h5>Shrink the problem</h5><p>Cut the code down until only the broken bit is left. A ten-line failing example is easy to fix; a 300-line one isn't.</p></div>
+              <div class="concept"><h5>Rubber ducking</h5><p>Explain the code line by line to an object, a pet, or a chat window. <b>You'll usually catch it mid-sentence.</b></p></div>
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Read the traceback</span><span class="tag">Print debugging</span><span class="tag">Decomposition</span><span class="tag">Daily practice</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">debugging_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://pythontutor.com/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Python Tutor <span class="free">free</span></span><span class="r-desc">Watch your code execute line by line, with the memory drawn out. Brilliant when you're stuck.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://exercism.org/tracks/python" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Exercism: Python track <span class="free">free</span></span><span class="r-desc">Hundreds of small exercises with feedback from real mentors.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.codewars.com/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Codewars <span class="free">free</span></span><span class="r-desc">Short puzzles, ranked by difficulty. Ten minutes a day beats a weekend binge.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># sit with it for 20 minutes before you ask anyone or anything.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- terminal + git -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 03 · THE TOOLING</div>
+          <h3>The terminal <em>& Git</em></h3>
+          <div class="body">
+            <p>The stuff no course teaches and every job assumes. The terminal is how you actually run things; Git is how you save your work in a way that lets you undo mistakes and show your history. Learning both early makes everything afterwards less frightening.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              Git is <b>a save system for a whole project.</b> You take snapshots as you go, so you can always get back to a version that worked, and try risky changes without fear. GitHub is just where those snapshots live online, and it doubles as your CV in this field.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Shell basics</span><span class="tag">Git commits</span><span class="tag">Branches</span><span class="tag">GitHub</span><span class="tag">Virtual environments</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">tooling_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://missing.csail.mit.edu/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>MIT: The Missing Semester <span class="free">free</span></span><span class="r-desc">The shell, editors, git and tooling. Exactly the gap other courses leave.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://learngitbranching.js.org/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Learn Git Branching <span class="free">free</span></span><span class="r-desc">Visual, interactive git. Makes branches click in an afternoon.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://skills.github.com/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>GitHub Skills <span class="free">free</span></span><span class="r-desc">Short guided exercises inside real repositories.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># commit small and often. your future self is grateful.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- vibecoding note -->
+    <div class="track reveal">
+      <div class="t-idx">A WORD ON USING AI WHILE YOU LEARN</div>
+      <h3>Don't let it <em>code for you</em> yet</h3>
+      <div class="body" style="max-width:62ch">
+        <p>An LLM will happily hand you working code for anything in this section. That's exactly the problem. The understanding you're building here comes from being stuck and getting unstuck, and accepting a finished answer skips the only part that was doing the teaching.</p>
+        <p>There's a difference between a tutor and a ghostwriter. <b>Asking it to explain an error, or to review code you already wrote, is a tutor.</b> Asking it to write the function is a ghostwriter, and you'll feel the hole later, usually the first time something breaks in a way you can't read. Once you can genuinely follow every line it produces, use it freely; phase 05 is all about that.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DATA SCIENCE ============ -->
+<section id="ds" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Data <em>science</em> & ML</h2><span class="label">Phase 03 · the practical core</span></div>
+
+    <p class="road-intro reveal" style="margin-bottom:30px">This is where most of the real work happens. Surprisingly little of the job is inventing clever algorithms. Most of it is getting data, cleaning it, looking at it properly, applying tools that already exist, and then getting the result somewhere people can use. Learn it in this order.</p>
+
+    <!-- data stack -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 01 · FOUNDATIONS</div>
+          <h3>The <em>data stack</em></h3>
+          <div class="body">
+            <p>You know Python from phase 02. This is the data dialect of it: NumPy for fast arrays, Pandas for tables, SQL for getting data out of a database in the first place. Beginners skip SQL and regret it, because almost every real job touches it.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              <b>Pandas</b> is a spreadsheet you drive with code. <b>SQL</b> is how you ask a database "give me just these rows." <b>NumPy</b> is the fast maths underneath both. You'll use all three constantly.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">NumPy</span><span class="tag">Pandas</span><span class="tag">DataFrames</span><span class="tag">SQL queries</span><span class="tag">Joins</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">data_stack_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.kaggle.com/learn/pandas" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Pandas <span class="free">free</span></span><span class="r-desc">The library you'll live in. Short, practical, real notebooks.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://numpy.org/doc/stable/user/absolute_beginners.html" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>NumPy: absolute beginner's guide <span class="free">free</span></span><span class="r-desc">Arrays, shapes and vectorised maths, from zero.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.w3schools.com/sql/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>W3Schools: SQL <span class="free">free</span></span><span class="r-desc">The query basics, in the same try-it-yourself style.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.kaggle.com/learn/intro-to-sql" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Intro to SQL <span class="free">free</span></span><span class="r-desc">Writing real queries against real tables in a notebook.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># type every example out. copy-pasting teaches nothing.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- data cleaning -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 02</div>
+          <h3>Data <em>cleaning</em></h3>
+          <div class="body">
+            <p>The unglamorous skill that quietly decides everything. Real data is messy: missing values, typos, wrong formats, three different spellings of the same city. A model fed bad data gives bad answers, no matter how fancy it is.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              <b>Garbage in, garbage out.</b> Cleaning is the boring-but-essential work of making messy data trustworthy before you ask any questions of it.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Missing values</span><span class="tag">Duplicates</span><span class="tag">Types & formats</span><span class="tag">Feature engineering</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">data_cleaning_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.kaggle.com/learn/data-cleaning" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Data Cleaning <span class="free">free</span></span><span class="r-desc">Hands-on with the messy-data problems you'll actually hit.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.kaggle.com/learn/feature-engineering" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Feature Engineering <span class="free">free</span></span><span class="r-desc">Turning raw columns into things a model can actually use.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># grab a messy dataset and practice on it.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDA -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 03 · BEFORE YOU MODEL</div>
+          <h3>Exploratory <em>data analysis</em></h3>
+          <div class="body">
+            <p>EDA is the habit of properly looking at a dataset before you trust it with anything. You count things, plot things, and go hunting for whatever is weird. It's the cheapest step in the whole process and it catches the mistakes that would otherwise quietly ruin a model three weeks later.</p>
+            <p>It also loops back into cleaning. You explore, you find something broken, you clean it, you explore again. Expect to go round that circle several times before you train anything.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              EDA is <b>getting to know your data before you trust it.</b> Plot everything, count everything, stay suspicious. A five-minute histogram has saved more projects than any clever algorithm.
+            </div>
+            <div class="concepts">
+              <div class="concept"><h5>Shape first</h5><p>How many rows and columns, what type is each, how much is missing. <b>Always look at the raw rows too</b>, summary statistics hide a lot.</p></div>
+              <div class="concept"><h5>Distributions</h5><p>Plot one column at a time. Is it skewed, does it have two humps, are there impossible values like a negative age or a 300-year-old customer?</p></div>
+              <div class="concept"><h5>Relationships</h5><p>Then plot pairs of columns. And remember: <b>correlation is not causation.</b> Two things moving together is a question, not an answer.</p></div>
+              <div class="concept"><h5>Leakage</h5><p>The killer bug. A column that secretly contains the answer makes your model look perfect in testing and useless in reality. <b>Ask where each column came from.</b></p></div>
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Matplotlib</span><span class="tag">Seaborn</span><span class="tag">Histograms</span><span class="tag">Outliers</span><span class="tag">Data leakage</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">eda_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.kaggle.com/learn/data-visualization" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Data Visualization <span class="free">free</span></span><span class="r-desc">Which plot to reach for, and how to make it. Start here.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Python Data Science Handbook <span class="free">free</span></span><span class="r-desc">The whole book online. Chapters 3 and 4 are the EDA core.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://seaborn.pydata.org/tutorial.html" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Seaborn: official tutorial <span class="free">free</span></span><span class="r-desc">Good-looking statistical plots in one line each.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.youtube.com/c/joshstarmer" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>StatQuest <span class="free">free</span></span><span class="r-desc">Back again, for reading distributions and spotting nonsense.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># plot it before you model it. every single time.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- machine learning -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 04 · THE BIG ONE</div>
+          <h3>Machine <em>learning</em></h3>
+          <div class="body">
+            <p>Here's the secret that makes all of it click, and it's worth reading twice. A machine learning model is <b>just a maths function</b>. Numbers go in, a prediction comes out. "Training" is nothing more than searching for the version of that function that fits your data best.</p>
+            <div class="intuition">
+              <span class="label">The core intuition, read this twice</span>
+              Machine learning is <b>finding the best simple formula that connects your data.</b> You have inputs and known answers; the machine tweaks a formula until its outputs match the answers as closely as possible. Then you feed it new inputs and trust its prediction.
+            </div>
+            <div class="concepts">
+              <div class="concept"><h5>Weights</h5><p>How <b>important</b> each input is. You can't change the inputs themselves, but you can change how much each one counts. An input multiplied by 5 matters far more than one multiplied by 1.</p></div>
+              <div class="concept"><h5>Bias</h5><p>A <b>baseline that shifts</b> the whole result up or down. It lets the formula start from the right place before the inputs adjust it.</p></div>
+            </div>
+            <p>Most of what you'll meet here is <b>supervised learning</b>, where every example comes with the right answer attached, plus some <b>unsupervised</b> methods that find structure with no answers at all. There's a third kind, reinforcement learning, which learns from consequences instead. It's over in phase 04, and the module there explains why it's waiting for you at the end of deep learning.</p>
+          </div>
+          <div class="tagrow"><span class="tag">Regression</span><span class="tag">Classification</span><span class="tag">Overfitting</span><span class="tag">scikit-learn</span><span class="tag">Kaggle datasets</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">machine_learning_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.coursera.org/specializations/machine-learning-introduction" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Andrew Ng: ML Specialization <span class="free">free to audit</span></span><span class="r-desc">The gold-standard starting course. Audit it for free.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://developers.google.com/machine-learning/crash-course" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Google: ML Crash Course <span class="free">free</span></span><span class="r-desc">~15 hours, well-produced, low maths barrier.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://scikit-learn.org/stable/user_guide.html" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>scikit-learn: User Guide <span class="free">free</span></span><span class="r-desc">The built-in library you'll build real models with.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://github.com/microsoft/ML-For-Beginners" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Microsoft: ML for Beginners <span class="free">free</span></span><span class="r-desc">A gentle full curriculum with lessons and quizzes.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.kaggle.com/datasets" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle: Datasets <span class="free">free</span></span><span class="r-desc">Thousands of real datasets to practice on. Pick one you find fun.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.kaggle.com/learn/intro-to-machine-learning" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Intro to ML <span class="free">free</span></span><span class="r-desc">Train your first model in a browser notebook.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># Ng for understanding, sklearn + Kaggle for doing.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- data ethics -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 05</div>
+          <h3>Data <em>ethics</em></h3>
+          <div class="body">
+            <p>Models affect real people. They can inherit bias from their data and make unfair decisions at scale. Knowing how to spot and reduce that harm is part of doing this work responsibly, not an optional extra.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              A model trained on biased data will <b>repeat that bias confidently.</b> Ethics is learning to ask "who could this harm, and how would I know?" before you ship anything.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Bias & fairness</span><span class="tag">Privacy</span><span class="tag">Accountability</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">data_ethics_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.kaggle.com/learn/intro-to-ai-ethics" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Kaggle Learn: Intro to AI Ethics <span class="free">free</span></span><span class="r-desc">Bias, fairness and how to audit a model, hands-on.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://ethics.fast.ai/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>fast.ai: Practical Data Ethics <span class="free">free</span></span><span class="r-desc">A full free course on the real-world consequences.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># the best engineers ask "should we?" not just "can we?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- deployment + MLOps -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 06 · SHIPPING IT</div>
+          <h3>Deployment <em>& MLOps</em></h3>
+          <div class="body">
+            <p>A model sitting in a notebook on your laptop isn't finished, it's a sketch. Deployment is everything that turns it into something other people can actually use: packaging it, putting it behind an address your app can call, and watching it afterwards so you notice when it starts going wrong.</p>
+            <p><b>MLOps</b> is the name for that whole discipline. It borrows most of its ideas from normal software engineering, with one extra headache: a normal program breaks loudly, but a model degrades quietly, still returning confident answers that are slowly getting worse. Almost nothing you learn here is hard, and almost nobody does it, so it's the fastest way to look like an engineer rather than a hobbyist.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              <b>MLOps is DevOps for models.</b> The model itself is just a file. This is everything around it: how it gets built the same way twice, how it gets served, and how you find out when the world moved on without it.
+            </div>
+            <div class="concepts">
+              <div class="concept"><h5>Serving</h5><p>Wrap the model in a small web API so anything can ask it for a prediction. <b>FastAPI plus Docker</b> is the standard first stack, and it's a weekend's work.</p></div>
+              <div class="concept"><h5>Reproducibility</h5><p>Same data, same code, same settings, same model. Version all three, or you'll never be able to explain <b>why last month's model was better.</b></p></div>
+              <div class="concept"><h5>Monitoring & drift</h5><p>The world keeps changing; your model doesn't. <b>Drift</b> is when incoming data stops resembling what it trained on. Watch the inputs and the predictions, not just whether the server is up.</p></div>
+              <div class="concept"><h5>Pipelines</h5><p>The boring automation: collect → clean → train → evaluate → deploy, on a schedule, without you. Boring is the point.</p></div>
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">FastAPI</span><span class="tag">Docker</span><span class="tag">MLflow</span><span class="tag">CI/CD</span><span class="tag">Monitoring</span><span class="tag">Drift</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">deployment_mlops_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://developers.google.com/machine-learning/crash-course/production-ml-systems" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Google MLCC: Production ML Systems <span class="free">free</span></span><span class="r-desc">What changes when a model leaves the notebook. Beginner-safe, read this first.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://fastapi.tiangolo.com/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>FastAPI: official docs <span class="free">free</span></span><span class="r-desc">Turn a Python function into a real API endpoint in about ten lines.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://docs.docker.com/get-started/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Docker: Get Started <span class="free">free</span></span><span class="r-desc">Containers, so "it works on my machine" stops being a problem.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://github.com/DataTalksClub/mlops-zoomcamp" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>MLOps Zoomcamp <span class="free">free</span></span><span class="r-desc">A full free course: experiment tracking, pipelines, deployment, monitoring.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://madewithml.com/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Made With ML <span class="free">free</span></span><span class="r-desc">Design, develop, deploy and iterate on a production ML system.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># if it only runs on your laptop, it isn't finished.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- vector databases -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 07 · THE NEW PIECE</div>
+          <h3>Embeddings & <em>vector databases</em></h3>
+          <div class="body">
+            <p>The piece of deployment infrastructure that arrived with modern AI, and the reason it belongs here rather than in the LLM section: it's a database question first and a model question second. An <b>embedding</b> is a list of numbers a model produces to stand for a thing, arranged so that similar things end up close together. A <b>vector database</b> stores millions of them and answers "what's nearest to this?" in milliseconds.</p>
+            <p>That one trick powers semantic search, recommendations, deduplication, and the retrieval half of retrieval-augmented generation, which is how you give a language model access to documents it was never trained on. You'll meet the other half in phase 05.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              An embedding is <b>meaning turned into coordinates.</b> A vector database is the map you look things up on: instead of matching words, you find the nearest points. Search for "how do I cancel" and it finds a page titled "ending your subscription", because those two live in the same neighbourhood.
+            </div>
+            <div class="concepts">
+              <div class="concept"><h5>Embedding</h5><p>A fixed-length list of numbers produced by a model. <b>Similar meaning, similar numbers</b>, and it works for text, images or products alike.</p></div>
+              <div class="concept"><h5>Similarity search</h5><p>Nearness stands in for relatedness. <b>Cosine similarity</b> is the usual ruler: it compares direction rather than size.</p></div>
+              <div class="concept"><h5>Chunking</h5><p>You can't embed a whole book usefully, so you split it into passages first. <b>How you chunk is the single biggest quality lever</b> in a retrieval system.</p></div>
+              <div class="concept"><h5>ANN indexes</h5><p>Comparing against every vector is too slow at scale, so these databases use <b>approximate</b> nearest-neighbour indexes: a sliver of accuracy traded for enormous speed.</p></div>
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Embeddings</span><span class="tag">Cosine similarity</span><span class="tag">FAISS</span><span class="tag">Chroma</span><span class="tag">pgvector</span><span class="tag">RAG</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">vector_db_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.pinecone.io/learn/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Pinecone: Learn <span class="free">free</span></span><span class="r-desc">Vendor-written but genuinely excellent explainers on embeddings and vector search.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://sbert.net/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Sentence Transformers <span class="free">free</span></span><span class="r-desc">Make your own embeddings locally, no API key, a few lines of Python.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://docs.trychroma.com/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Chroma: docs <span class="free">free</span></span><span class="r-desc">The easiest vector database to run on your own laptop. Start here.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://github.com/facebookresearch/faiss/wiki" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>FAISS: wiki <span class="free">free</span></span><span class="r-desc">Meta's similarity-search library, and a good tour of how ANN indexes work.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://github.com/pgvector/pgvector" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>pgvector <span class="free">free</span></span><span class="r-desc">Vector search inside Postgres. Often all you need, and one less thing to run.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># build it with chroma locally before you pay anyone anything.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DEEP LEARNING ============ -->
+<section id="dl" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Deep <em>learning</em></h2><span class="label">Phase 04 · stacking it up</span></div>
+
+    <p class="road-intro reveal" style="margin-bottom:14px">One idea unlocks this entire section, so sit with it before any model name. You already know a machine learning model is just a maths function. <b>Deep learning is what happens when you stack many of those functions on top of each other</b>, so the output of one becomes the input of the next, layer after layer.</p>
+    <p class="road-intro reveal">Stacking lets the model learn patterns far too complicated for a single formula. That's the whole trick. Everything famous, from the vision models to the language models, is this same idea arranged in different shapes.</p>
+
+    <!-- core concepts -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 01 · DO NOT SKIP</div>
+          <h3>The <em>core</em> concepts</h3>
+          <div class="body">
+            <p>Learn these before any specific model. They're the building blocks every deep learning system shares, and they're simpler than they sound.</p>
+            <div class="concepts">
+              <div class="concept"><h5>Neuron</h5><p>One tiny maths function: it takes inputs, multiplies each by a <b>weight</b>, adds a <b>bias</b>, and passes on a single number. That's all a neuron is.</p></div>
+              <div class="concept"><h5>Activation function</h5><p>A small step that lets the network bend and curve instead of only drawing straight lines, so it can learn complicated patterns.</p></div>
+              <div class="concept"><h5>Layers</h5><p>Neurons lined up side by side, then stacked. The output of one layer feeds the next: functions feeding functions.</p></div>
+              <div class="concept"><h5>Backpropagation</h5><p>How the network learns from mistakes: it traces the error backwards and nudges every weight a little in the direction that reduces it. Repeat millions of times.</p></div>
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Neurons</span><span class="tag">Activations</span><span class="tag">Backprop</span><span class="tag">Gradient descent</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">core_concepts_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.3blue1brown.com/topics/neural-networks" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown: Neural Networks <span class="free">free</span></span><span class="r-desc">The single best visual explanation of neurons and backprop. Watch first.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Andrej Karpathy: Zero to Hero <span class="free">free</span></span><span class="r-desc">Build a neural net from scratch, line by line. Code along, don't just watch.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.deeplearning.ai/courses/deep-learning-specialization/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Andrew Ng: Deep Learning Specialization <span class="free">free to audit</span></span><span class="r-desc">The structured course once the intuition has landed.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># this is the foundation. everything below is a variation of it.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- vision / CNN -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 02 · MODEL FAMILY</div>
+          <h3>Vision models <em>(CNNs)</em></h3>
+          <div class="body">
+            <p>The models that see. They're built for images, where what matters is the pattern in a patch of nearby pixels: an edge, a corner, eventually a face.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              A CNN <b>scans an image in small tiles</b> looking for little patterns, then combines them into bigger ones. Early layers spot edges; later layers spot whole objects.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Convolution</span><span class="tag">Image classification</span><span class="tag">Computer vision</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">vision_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://course.fast.ai/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>fast.ai: Practical Deep Learning <span class="free">free</span></span><span class="r-desc">You train a working image classifier in lesson one. Build-first teaching.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://cs231n.github.io/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Stanford CS231n: Notes <span class="free">free</span></span><span class="r-desc">The classic deep dive on CNNs when you want more depth.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># MNIST digits is the traditional first vision project.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- sequence / RNN -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 03 · MODEL FAMILY</div>
+          <h3>Sequence models <em>(RNNs & LSTMs)</em></h3>
+          <div class="body">
+            <p>Models for data where order matters: text, speech, time series. They read one step at a time and carry a little memory of what came before.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              These models <b>remember the previous steps</b> as they read, the way you hold the start of a sentence in mind to understand its end.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Sequences</span><span class="tag">Memory</span><span class="tag">Time series</span><span class="tag">LSTM</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">sequence_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.youtube.com/watch?v=AsNTP8Kwu80" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>StatQuest: RNNs & LSTMs <span class="free">free</span></span><span class="r-desc">Clear, beginner-paced explanation of memory in networks.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>colah's blog: Understanding LSTMs <span class="free">free</span></span><span class="r-desc">The famous illustrated write-up. Still the best read on the topic.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># learn these before transformers, they set up the problem.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- transformers -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 04 · MODEL FAMILY</div>
+          <h3><em>Transformers</em></h3>
+          <div class="body">
+            <p>The architecture behind modern language models and most of today's AI. Instead of reading strictly step by step, a transformer looks at all the words at once and learns which ones to pay attention to.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              A transformer reads everything at once and asks, for each word, <b>"which other words should I pay attention to here?"</b> That ability to weigh relationships is what makes it so powerful, and it's still just stacked maths functions.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Attention</span><span class="tag">Language models</span><span class="tag">Embeddings</span><span class="tag">LLMs</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">transformer_resources.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.youtube.com/watch?v=wjZofJX0v4M" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>3Blue1Brown: But what is a GPT? <span class="free">free</span></span><span class="r-desc">Visual intro to transformers and attention. Start here.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>The Illustrated Transformer <span class="free">free</span></span><span class="r-desc">The classic picture-by-picture walkthrough of the architecture.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://huggingface.co/learn/nlp-course" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Hugging Face: NLP Course <span class="free">free</span></span><span class="r-desc">Build and use real transformer models with code.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># this is the current frontier. you got here from neurons.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- reinforcement learning -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 05 · A DIFFERENT KIND OF LEARNING</div>
+          <h3>Reinforcement <em>learning</em></h3>
+          <div class="body">
+            <p>Everything so far learned from an answer key: here's the input, here's the correct output, minimise the difference. Reinforcement learning throws the key away. An <b>agent</b> acts in an environment, receives a reward or a penalty, and gradually works out which behaviours pay off. It's how you teach something to play a game, control a robot, manage a warehouse, or route traffic.</p>
+            <p><b>Why it's here and not back in phase 03.</b> Textbooks list it as the third branch of machine learning, next to supervised and unsupervised, so it would sit fine there. But anything you'd actually build today uses a neural network as the agent's brain, so it only really makes sense once neurons and gradients are second nature. It also sets up the next section: chat models are tuned with reinforcement learning from human feedback, and reasoning models are trained by rewarding answers that turn out to be checkably correct. This module is the bridge between the two halves of modern AI.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              Supervised learning is <b>learning from an answer key.</b> Reinforcement learning is <b>learning from consequences</b>: try something, see whether it went well, do more of what worked. It's how you'd train a dog, not how you'd mark an exam.
+            </div>
+            <div class="concepts">
+              <div class="concept"><h5>Agent & environment</h5><p>The thing making decisions, and the world it acts on. The environment hands back a new situation and a score after every move.</p></div>
+              <div class="concept"><h5>Reward</h5><p>One number saying "that was good" or "that was bad". <b>Designing it badly is the classic failure:</b> the agent optimises exactly what you measured, not what you meant, and will happily cheat.</p></div>
+              <div class="concept"><h5>Policy</h5><p>The strategy: given what I can see, what do I do? In deep RL <b>the policy is a neural network</b>, which is the whole reason this module waits until now.</p></div>
+              <div class="concept"><h5>Explore vs exploit</h5><p>Take the reward you already know about, or gamble on finding a better one? Every RL algorithm is a different answer to that trade-off.</p></div>
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Agents</span><span class="tag">Rewards</span><span class="tag">Q-learning</span><span class="tag">Policy gradients</span><span class="tag">RLHF</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">reinforcement_learning.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://huggingface.co/learn/deep-rl-course" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Hugging Face: Deep RL Course <span class="free">free</span></span><span class="r-desc">Hands-on from unit one, in free Colab notebooks. The best starting point.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://spinningup.openai.com/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>OpenAI: Spinning Up in Deep RL <span class="free">free</span></span><span class="r-desc">Clear theory paired with readable implementations. Read after the HF course.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://gymnasium.farama.org/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Gymnasium <span class="free">free</span></span><span class="r-desc">The standard set of practice environments, from cartpoles to Atari.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="http://incompleteideas.net/book/the-book-2nd.html" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Sutton & Barto: RL, an Introduction <span class="free">free</span></span><span class="r-desc">The field's textbook, free online. Dense, but the reference for everything above.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># reward design is the whole game. the agent will cheat if you let it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEVERAGING LLMs ============ -->
+<section id="llms" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Working with <em>LLMs</em></h2><span class="label">Phase 05 · the modern tool</span></div>
+
+    <p class="road-intro reveal" style="margin-bottom:14px">Large language models like ChatGPT and Claude are the tools you'll actually reach for every day, both to learn faster and to build things. Used well, an LLM is like a patient tutor who never gets tired of your questions. Used badly, it quietly teaches you wrong things. <b>And you'll be surprised to know that most apps with built in chatbots are just LLM wrappers with a prompt thrown at it to take the role of the platforms help bot lol</b></p>
+    <p class="road-intro reveal" style="margin-bottom:30px">The skill isn't just typing a question. It's knowing how to ask, how to check the answer, and how to plug a model into your own code. Learn it last, on purpose, because it's most useful once you understand enough to spot when the model is wrong.</p>
+
+    <!-- as a learning tool -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 01</div>
+          <h3>LLMs as a <em>learning</em> partner</h3>
+          <div class="body">
+            <p>The fastest way to get unstuck. Paste an error, ask it to explain a concept five different ways, or have it quiz you. But it can sound confident and still be wrong, so treat every answer as a smart friend's guess, not gospel.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              An LLM <b>predicts the next likely words</b>, it doesn't look things up or truly "know." That's why it can invent facts. Use it to understand and explore, then verify anything that matters against a real source.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Explain like I'm 5</span><span class="tag">Debugging help</span><span class="tag">Self-quizzing</span><span class="tag">Always verify</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">learning_with_llms.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.anthropic.com/learn" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Learn <span class="free">free</span></span><span class="r-desc">Guides on getting useful, accurate answers from Claude.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.deeplearning.ai/short-courses/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>DeepLearning.AI: Short Courses <span class="free">free</span></span><span class="r-desc">Free hour-long courses on building with LLMs, beginner-friendly.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># ask it to explain, then check the explanation yourself.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- prompt engineering -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 02</div>
+          <h3>Prompt <em>engineering</em></h3>
+          <div class="body">
+            <p>Just a fancy name for asking clearly. The model can only work with what you give it, so the more specific you are about the goal, the format, and any examples, the better the answer. This is a real, learnable skill that makes everything else easier.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              A vague question gets a vague answer. <b>Tell it who to be, what you want, and show one example.</b> "Fix my code" is weak; "You're a Python tutor, here's my code and the error, explain the bug in plain English then show the fix" is strong.
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Be specific</span><span class="tag">Give examples</span><span class="tag">Set a role</span><span class="tag">Ask for steps</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">prompt_engineering.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Prompt Engineering <span class="free">free</span></span><span class="r-desc">The clearest practical guide. Clear instructions, examples, step-by-step reasoning.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.promptingguide.ai/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Prompting Guide <span class="free">free</span></span><span class="r-desc">A free, thorough reference covering techniques with examples.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># a good prompt is just a clear brief. practice writing them.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- calling an LLM api -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 03 · FROM CHATTING TO BUILDING</div>
+          <h3>Calling an <em>LLM API</em></h3>
+          <div class="body">
+            <p>This is how you go from typing in a browser to building your own apps. An API is just a way for your code to send a message to the model and get a reply back, the same conversation, but done in Python instead of a chat box. You send a list of messages, you get a message back. That's the entire shape of it.</p>
+            <p>One fact explains almost everything else in this section: <b>the API is stateless.</b> The model remembers nothing between calls. A "conversation" is an illusion your code creates by re-sending the whole history every single time. Cost, context limits and caching all follow from that.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              An API call is <b>one message in, one message out.</b> Your program keeps the conversation; the model just answers the latest version of it, from scratch, every time.
+            </div>
+            <div class="concepts">
+              <div class="concept"><h5>Messages & roles</h5><p>The request is a list of turns: a <b>system</b> instruction that sets standing rules, then alternating <b>user</b> and <b>assistant</b> messages. Building a chatbot means appending to that list.</p></div>
+              <div class="concept"><h5>Tokens</h5><p>Models read in chunks of characters called tokens, <b>roughly three-quarters of a word each.</b> You're billed per token in and per token out, and every limit is measured in them.</p></div>
+              <div class="concept"><h5>Temperature</h5><p>How much randomness in the wording. Near zero for extraction and classification, higher for creative work. <b>It isn't an intelligence dial.</b></p></div>
+              <div class="concept"><h5>Streaming</h5><p>Receive the reply piece by piece as it's generated rather than waiting for all of it. Same output, far better to sit in front of.</p></div>
+            </div>
+            <p>Two more things you'll want almost immediately. <b>Structured output:</b> ask for JSON matching a shape you define, and you get something your code can use directly instead of prose you have to pick apart. <b>Failures:</b> networks time out and rate limits get hit, so wrap calls in a retry that waits a little longer each attempt. And keep your API key in an environment variable, never typed into the file.</p>
+          </div>
+          <div class="tagrow"><span class="tag">Messages</span><span class="tag">Tokens</span><span class="tag">Temperature</span><span class="tag">Streaming</span><span class="tag">JSON output</span><span class="tag">Retries</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">first_api_call.py</div></div>
+          <div class="p-body">
+            <a class="res" href="https://docs.claude.com/en/docs/get-started" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Get Started <span class="free">free docs</span></span><span class="r-desc">Your first API call in Python, step by step.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://platform.claude.com/docs/en/api/messages" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Messages API reference <span class="free">free docs</span></span><span class="r-desc">Every parameter explained. Keep it open while you build.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.w3schools.com/python/module_requests.asp" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>W3Schools: Python Requests <span class="free">free</span></span><span class="r-desc">How code sends and receives data, the basics behind any API.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://ollama.com/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Ollama <span class="free">free</span></span><span class="r-desc">Run an open model on your own machine. No key, no bill, same message format.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># never paste your API key into public code or GitHub.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- context + caching + cost -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 04 · THE PART THAT COSTS MONEY</div>
+          <h3>Context, <em>caching</em> & cost</h3>
+          <div class="body">
+            <p>Two questions hit every LLM project in its first week: how much can I show the model, and why is the bill so big? Both come back to tokens, and both have tidy answers.</p>
+            <p>The <b>context window</b> is the model's desk. Everything it can see at once has to fit on it: your system prompt, the entire conversation so far, any documents you pasted in, plus room for the reply it's about to write. Bigger is not automatically better either. Fill a window with junk and answers get worse, not better, so deciding what earns a place on that desk is the real skill. People call that <b>context engineering</b>, and it's where prompt engineering grows up.</p>
+            <p>Then <b>caching</b>. If the start of your prompt is identical on every call, a long system prompt, a style guide, a document you keep asking about, you're paying the model to re-read it every single time. Prompt caching lets the provider keep that processed opening warm, so repeat calls are dramatically cheaper and noticeably faster. There's one rule that makes it work: <b>stable content first, changing content last.</b> Caching matches on the prefix, so a single edited character near the top throws away everything after it. Put a timestamp at the front of your prompt and you'll never get a cache hit at all.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              The context window is <b>how much the model can hold in its head at once</b>, and you pay for all of it, on every turn. Caching is <b>paying properly once for the part that never changes,</b> then almost nothing to reuse it.
+            </div>
+            <div class="concepts">
+              <div class="concept"><h5>Context window</h5><p>Measured in tokens and shared between what you send and what comes back. When a chat outgrows it you must <b>summarise or trim</b> the old turns, not just hope.</p></div>
+              <div class="concept"><h5>Prompt caching</h5><p>Reuse the processed prefix of a repeated prompt. Huge win for chatbots over a fixed knowledge base, or agents with long tool definitions. <b>Order your prompt stable-to-variable.</b></p></div>
+              <div class="concept"><h5>Batching</h5><p>If you don't need the answer this second, batch APIs run jobs asynchronously at a steep discount. Ideal for <b>bulk classification, backfills and evals.</b></p></div>
+              <div class="concept"><h5>Cost control</h5><p>Measure tokens per request before you scale anything. Then <b>route</b>: a small cheap model for the easy steps, the expensive one only where it earns its place.</p></div>
+            </div>
+          </div>
+          <div class="tagrow"><span class="tag">Context window</span><span class="tag">Context engineering</span><span class="tag">Prompt caching</span><span class="tag">Batch API</span><span class="tag">Token budget</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">context_and_cost.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://platform.claude.com/docs/en/build-with-claude/context-windows" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Context windows <span class="free">free docs</span></span><span class="r-desc">What counts toward the window and how it's spent. Read this one first.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Prompt caching <span class="free">free docs</span></span><span class="r-desc">How prefix caching works, where to put the breakpoint, what invalidates it.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://platform.claude.com/docs/en/build-with-claude/batch-processing" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Batch processing <span class="free">free docs</span></span><span class="r-desc">Async jobs at half price when latency doesn't matter.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Effective context engineering <span class="free">free</span></span><span class="r-desc">Why curating context beats stuffing it. The best single read on this.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># stable stuff first, changing stuff last. that's the whole trick.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- agents + harness + loop -->
+    <div class="track reveal">
+      <div class="track-grid">
+        <div class="txt">
+          <div class="t-idx">MODULE 05 · WHERE IT'S ALL GOING</div>
+          <h3>Agents, harnesses <em>& the loop</em></h3>
+          <div class="body">
+            <p>A chatbot answers. An agent does. The difference is one loop. You give the model a goal and a set of <b>tools</b> it can call, search the web, read a file, run code, query the vector database you built in phase 03, and then let it run. It asks for a tool, your code executes it, you hand back the result, it decides what to do next. Repeat until the job's done or you stop it.</p>
+            <p>Notice who does what there. The model never runs anything itself; it only ever asks. Everything around it, the tool definitions, the code that actually executes them, the memory, the file access, the permission checks, the loop itself, is the <b>harness</b>. This is the part you build, and when people say an agent is good, they usually mean somebody wrote a good harness. The model was the same one everyone else has.</p>
+            <p><b>Loop engineering</b> is the design work inside that cycle. What goes back into context after each step, what gets summarised or dropped, when to stop, what happens when a tool errors or the model starts going round in circles, and how much you're willing to spend before you pull the plug. It's unglamorous and it's most of the job.</p>
+            <div class="intuition">
+              <span class="label">Plain version</span>
+              An agent is <b>a model in a loop with tools.</b> It decides, your code acts, the result goes back in, round again. The cleverness lives in the loop, not in the model.
+            </div>
+            <div class="concepts">
+              <div class="concept"><h5>Tools</h5><p>Functions you describe in plain language: a name, what it does, what arguments it takes. <b>Write those descriptions as carefully as your prompt</b>, because that's all the model has to go on.</p></div>
+              <div class="concept"><h5>The harness</h5><p>The scaffolding around the model: tool implementations, memory, permissions, retries, logging, spend limits. <b>The thing you're actually building.</b></p></div>
+              <div class="concept"><h5>The loop</h5><p>Think, act, observe, repeat. Every hard agent question is about this cycle: <b>what's in context, when does it stop, what happens when a step fails.</b></p></div>
+              <div class="concept"><h5>Evals</h5><p>Agents fail in ways that look fine. Keep a set of tasks with known-good outcomes and re-run them <b>every time you change the prompt or the loop</b>, or you're just guessing.</p></div>
+            </div>
+            <p>Two pieces of advice worth more than any framework. <b>Most problems don't need an agent</b>: one good prompt, or a fixed chain of two or three calls, is cheaper and far more predictable. And when you do build one, give it the fewest tools that can do the job, plus a hard cap on steps and spend. An agent with twelve tools and no ceiling is a bill with a personality.</p>
+          </div>
+          <div class="tagrow"><span class="tag">Tool use</span><span class="tag">Harness</span><span class="tag">Loop engineering</span><span class="tag">MCP</span><span class="tag">Evals</span><span class="tag">Guardrails</span></div>
+        </div>
+        <div class="plate">
+          <div class="p-head"><div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div><div class="p-title">agents_and_harnesses.md</div></div>
+          <div class="p-body">
+            <a class="res" href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Building effective agents <span class="free">free</span></span><span class="r-desc">Workflows vs agents, and the handful of patterns worth knowing. Read this first.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://huggingface.co/learn/agents-course" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Hugging Face: AI Agents Course <span class="free">free</span></span><span class="r-desc">Build one yourself, from the think-act-observe loop up. Free certificate too.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Anthropic: Tool use <span class="free">free docs</span></span><span class="r-desc">How to define tools and handle the calls the model makes.</span></span><span class="r-go">↗</span></a>
+            <a class="res" href="https://modelcontextprotocol.io/" target="_blank" rel="noopener"><span class="r-main"><span class="r-name"><span class="pin">#</span>Model Context Protocol <span class="free">free</span></span><span class="r-desc">An open standard for plugging tools and data into models. Worth knowing about.</span></span><span class="r-go">↗</span></a>
+          </div>
+          <div class="plate-note"># most problems don't need an agent. try one good prompt first.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ DONATIONS ============ -->
+<section id="donate" class="pad">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>If it <em>helped</em></h2><span class="label">Optional · pay it forward</span></div>
+    <div class="donate-box reveal">
+      <div>
+        <h3>This is, and always will be, <em>free</em></h3>
+        <p>I built this because everything I learned, I learned for free. There's no paywall coming, and you never have to give a thing to use any of it.</p>
+        <p>But if it helped you, and only if you can comfortably spare it, a small tip helps me keep making free things and keeps learning accessible for the next person. <b>Completely optional. No pressure, no hard feelings.</b></p>
+      </div>
+      <div class="donate-side">
+        <div class="donate-note">"Let's make learning accessible to encourage our youth to be educated."</div>
+        <a class="kofi-btn" href="https://ko-fi.com/lachinemearningiris" target="_blank" rel="noopener"><span class="cup">☕</span> Tip on Ko-fi <span class="arr">↗</span></a>
+        <span class="donate-free">No account needed · tip any amount</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSING ============ -->
+<section id="close">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="label">One last thing</span>
+      <h2 class="c-head serif">Now go and <em>build</em> something.</h2>
+    </div>
+    <p class="road-intro reveal" style="margin-bottom:36px">You don't need to finish every resource before you start making things. Learn a little, build a small project, get stuck, look it up, keep going. That loop, not any single course, is what turns you into someone who can do this. Questions, or want to share what you've built?</p>
+    <div class="links reveal">
+      <a class="lk" href="https://www.tiktok.com/@lachinemearning.com" target="_blank" rel="noopener">
+        <div><div class="plat">TikTok, more explainers</div><div class="handle">@lachinemearning.com</div></div><span class="arr">↗</span>
+      </a>
+      <a class="lk" href="https://github.com/cat7enthusiast" target="_blank" rel="noopener">
+        <div><div class="plat">GitHub, see the work</div><div class="handle">cat7enthusiast</div></div><span class="arr">↗</span>
+      </a>
+      <a class="lk" href="index.html">
+        <div><div class="plat">Back to</div><div class="handle">the portfolio</div></div><span class="arr">←</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>© <span id="yr"></span> <b>Ri here ! =^..^=</b></span>
+    <span>A free course · Maths · Code · Data Science · Deep Learning · LLMs</span>
+    <span class="accent">Learn it yourself</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* typewriter, mirrors the portfolio hero */
+  const words=["Start with the maths.","Learn to actually code.","Touch data science.","Reach deep learning.","Build with LLMs.","Teach it to yourself."];
+  const typed=document.getElementById('typed');
+  let wi=0,ci=0,del=false;
+  (function tw(){
+    const w=words[wi];typed.textContent=w.slice(0,ci);
+    if(!del&&ci<w.length){ci++;setTimeout(tw,70);}
+    else if(!del&&ci===w.length){del=true;setTimeout(tw,1800);}
+    else if(del&&ci>0){ci--;setTimeout(tw,34);}
+    else{del=false;wi=(wi+1)%words.length;setTimeout(tw,300);}
+  })();
+
+  /* gentle scroll reveals, same pattern as portfolio */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  /* light / dark theme toggle, mirrors the portfolio */
+  window.ATLAS = window.ATLAS || {};
+  const themeBtn = document.getElementById('themeBtn');
+  if (document.body.classList.contains('light')){        // restored from a previous visit
+    themeBtn.querySelector('.txt').textContent = 'Dark mode';
+    themeBtn.setAttribute('aria-pressed', 'true');
+  }
+  themeBtn.addEventListener('click', ()=>{
+    const light = document.body.classList.toggle('light');
+    themeBtn.querySelector('.txt').textContent = light ? 'Dark mode' : 'Light mode';
+    themeBtn.setAttribute('aria-pressed', String(light));
+    try { localStorage.setItem('ri-theme', light ? 'light' : 'dark'); } catch(e){}
+    if (window.ATLAS.setTheme) window.ATLAS.setTheme(light);
+  });
+</script>
+
+<script>
+/* ============================================================
+   AMBIENT SYNAPSE FIELD — a drifting neural network behind the
+   course, pixelated to match the portfolio's Neural Atlas.
+   Hides itself if WebGL is unavailable; freezes for
+   prefers-reduced-motion.
+   ============================================================ */
+(function(){
+  "use strict";
+
+  var holder = document.getElementById('synapse');
+  if (!holder || typeof THREE === 'undefined'){ if (holder) holder.classList.add('off'); return; }
+
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias:false, alpha:true, powerPreference:'low-power' });
+    if (!renderer.getContext()) throw new Error('no context');
+  } catch(e){ holder.classList.add('off'); return; }
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var PIX = 3;
+  renderer.setPixelRatio(1);
+  renderer.setClearColor(0x000000, 0);
+  holder.appendChild(renderer.domElement);
+
+  var scene  = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(40, 1, 0.1, 60);
+  camera.position.set(0, 0, 10);
+
+  var group = new THREE.Group();
+  scene.add(group);
+
+  function hash(n){ var x = Math.sin(n*127.1)*43758.5453; return x - Math.floor(x); }
+
+  /* nodes scattered in a flattened cloud around the page */
+  var N = 110;
+  var nodes = [];
+  for (var i=0; i<N; i++){
+    var u = hash(i*3.7)*2 - 1;
+    var a = hash(i*7.1) * Math.PI * 2;
+    var r = 2.2 + hash(i*1.9) * 4.6;
+    var s = Math.sqrt(Math.max(0, 1 - u*u));
+    nodes.push(new THREE.Vector3(
+      s*Math.cos(a) * r * 1.45,
+      u * r * 0.85,
+      s*Math.sin(a) * r * 0.55
+    ));
+  }
+
+  var edges = [];
+  for (i=0; i<N; i++){
+    var best = [];
+    for (var j=0; j<N; j++){
+      if (i===j) continue;
+      var d = nodes[i].distanceTo(nodes[j]);
+      if (d < 2.3) best.push([d, j]);
+    }
+    best.sort(function(a,b){ return a[0]-b[0]; });
+    for (var k=0; k<Math.min(2, best.length); k++){
+      var lo = Math.min(i, best[k][1]), hi = Math.max(i, best[k][1]), dup=false;
+      for (var e=0; e<edges.length; e++){ if (edges[e][0]===lo && edges[e][1]===hi){ dup=true; break; } }
+      if (!dup) edges.push([lo, hi]);
+    }
+  }
+
+  var nodeGeo = new THREE.BufferGeometry();
+  (function(){
+    var arr = new Float32Array(N*3);
+    for (var i=0; i<N; i++){ arr[i*3]=nodes[i].x; arr[i*3+1]=nodes[i].y; arr[i*3+2]=nodes[i].z; }
+    nodeGeo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+  })();
+  var nodeMat = new THREE.PointsMaterial({ color: 0xB14EFF, size: 2, sizeAttenuation: false, transparent: true, opacity: 0.55 });
+  group.add(new THREE.Points(nodeGeo, nodeMat));
+
+  var lineGeo = new THREE.BufferGeometry();
+  (function(){
+    var arr = new Float32Array(edges.length*6);
+    for (var i=0; i<edges.length; i++){
+      var a = nodes[edges[i][0]], b = nodes[edges[i][1]];
+      arr[i*6]=a.x; arr[i*6+1]=a.y; arr[i*6+2]=a.z;
+      arr[i*6+3]=b.x; arr[i*6+4]=b.y; arr[i*6+5]=b.z;
+    }
+    lineGeo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+  })();
+  var lineMat = new THREE.LineBasicMaterial({ color: 0xB14EFF, transparent: true, opacity: 0.10 });
+  group.add(new THREE.LineSegments(lineGeo, lineMat));
+
+  var PULSES = 8;
+  var pulses = [];
+  var pulseGeo = new THREE.BufferGeometry();
+  var pulseArr = new Float32Array(PULSES*3);
+  pulseGeo.setAttribute('position', new THREE.BufferAttribute(pulseArr, 3));
+  var pulseMat = new THREE.PointsMaterial({ color: 0xD9A8FF, size: 3, sizeAttenuation: false, transparent: true, opacity: 0.85 });
+  group.add(new THREE.Points(pulseGeo, pulseMat));
+  for (var pi=0; pi<PULSES; pi++){
+    pulses.push({ edge: Math.floor(hash(pi*9.3)*edges.length), t: -hash(pi*4.4)*2.5, speed: 0.4 + hash(pi*6.1)*0.6 });
+  }
+  function setPulse(i, t){
+    var e = edges[pulses[i].edge];
+    var a = nodes[e[0]], b = nodes[e[1]];
+    pulseArr[i*3]=a.x+(b.x-a.x)*t; pulseArr[i*3+1]=a.y+(b.y-a.y)*t; pulseArr[i*3+2]=a.z+(b.z-a.z)*t;
+  }
+  function stepPulses(dt){
+    for (var i=0; i<pulses.length; i++){
+      var p = pulses[i];
+      p.t += p.speed*dt;
+      if (p.t > 1){ p.edge = Math.floor(Math.random()*edges.length); p.t = -Math.random()*2.5; p.speed = 0.4 + Math.random()*0.6; }
+      if (p.t < 0){ pulseArr[i*3]=0; pulseArr[i*3+1]=-999; pulseArr[i*3+2]=0; }
+      else setPulse(i, p.t);
+    }
+    pulseGeo.attributes.position.needsUpdate = true;
+  }
+  (function(){ for (var i=0;i<PULSES;i++){ pulses[i].edge = i % edges.length; setPulse(i,(i+1)/(PULSES+1)); } pulseGeo.attributes.position.needsUpdate = true; })();
+
+  /* theme swap hook shared with the toggle button */
+  window.ATLAS.setTheme = function(light){
+    var accent = light ? 0xE8729A : 0xB14EFF;
+    var pulse  = light ? 0xF2A9C4 : 0xD9A8FF;
+    nodeMat.color.setHex(accent);
+    lineMat.color.setHex(accent);
+    lineMat.opacity = light ? 0.08 : 0.10;
+    pulseMat.color.setHex(pulse);
+    if (reduceMotion) renderer.render(scene, camera);
+  };
+  if (document.body.classList.contains('light')) window.ATLAS.setTheme(true);   // match restored theme
+
+  function resize(){
+    var w = Math.max(2, Math.floor(window.innerWidth  / PIX));
+    var h = Math.max(2, Math.floor(window.innerHeight / PIX));
+    renderer.setSize(w, h, false);
+    renderer.domElement.style.width  = '100%';
+    renderer.domElement.style.height = '100%';
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+
+  if (reduceMotion){
+    renderer.render(scene, camera);
+    var rrs;
+    window.addEventListener('resize', function(){
+      clearTimeout(rrs);
+      rrs = setTimeout(function(){ resize(); renderer.render(scene, camera); }, 150);
+    });
+    return;
+  }
+
+  var mx = 0, mxT = 0, my = 0, myT = 0;
+  window.addEventListener('pointermove', function(e){
+    mxT = (e.clientX / window.innerWidth ) * 2 - 1;
+    myT = (e.clientY / window.innerHeight) * 2 - 1;
+  }, { passive: true });
+
+  var running = !document.hidden;
+  var lastT = performance.now();
+  var resizePending = false;
+  window.addEventListener('resize', function(){ resizePending = true; });
+  document.addEventListener('visibilitychange', function(){
+    var was = running;
+    running = !document.hidden;
+    if (running && !was){ lastT = performance.now(); requestAnimationFrame(loop); }
+  });
+
+  function loop(now){
+    if (!running) return;
+    var dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now;
+    if (resizePending){ resizePending = false; resize(); }
+
+    mx += (mxT - mx) * 0.04;
+    my += (myT - my) * 0.04;
+
+    /* slow drift + gentle scroll parallax + mouse tilt */
+    group.rotation.y = now * 0.00003 + mx * 0.05;
+    group.rotation.x = my * 0.03;
+    group.position.y = window.pageYOffset * 0.00045;
+
+    stepPulses(dt);
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
