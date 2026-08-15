@@ -596,7 +596,7 @@ app = workflow.<span class="f">compile</span>()</pre>
   /* discord copy */
   const toast=document.getElementById('toast');
   document.getElementById('discordBtn').addEventListener('click',()=>{
-    const t="irtificialantelligence";
+    const t="ai.m1";
     (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject())
       .catch(()=>{const i=document.createElement('input');i.value=t;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();});
     toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800);
