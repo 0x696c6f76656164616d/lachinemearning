@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+<link href="https://api.fontshare.com/v2/css?f[]=rajdhani@300&f[]=switzer@200&display=swap" rel="stylesheet"> 
+
+
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/assets/Brain-Line-Art-W85euvQ7.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>lachine mearning</title>
+    <script type="module" crossorigin src="/assets/index-ee3Ox6zx.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Bgi7PJXw.css">
+  </head>
+  <body>
+    <nav id="navbar">
+      <div id="brand">=^..^=</div>
+      <div id="nav-links">
+  <button class="nav-btn" data-target="WhoSheIs">Who she is</button>
+  <button class="nav-btn" data-target="WhatSheDoes">What she does</button>
+  <button class="nav-btn" data-target="WhatSheKnows">What she knows</button>
+  <a class="nav-btn" href="/course.html">Learn from her</a>
+  <button class="nav-btn" data-target="CheckHerOut">Check her out</button>
+</div>
+    </nav>
+
+    <section id="hero">
+      <div id="brain-canvas"></div>
+      <div id="hero-text">
+        <h1>iris data science</h1>
+      </div>
+    </section>
+
+    <main id="content">
+      <section id="WhoSheIs" class="panel">
+        <ul>
+          <li>Online alias: Ri</li>
+          <li>March '07</li>
+          <li>USA|GBR</li>
+          <li>Education: Computer Science with AI BSc (Hons) (in progress)</li>
+          <li>Profession: Data Scientist/ML Engineer (contracted)</li>
+          <li>Extra Curriculars: Lead of AI Society, Course Rep</li>
+          <li>Goal: Deep Learning Researcher (I'm genuinely going to die with how busy I am)</li>
+        </ul>
+        <p>Fun facts about the larp</p>
+        <ul>
+          <li>I have typographic memory- I can recall text as a literal graphic in my brain. During exam season I'd remember my notes word for word by visualing it</li>
+          <li>14 piercings and 9 tattoos including logic gate circuits on my arms :3</li>
+          <li>Anime/manga obsessed: Neon Genesis Evangelion, Psycho Pass, Tokyo Ghoul, Made in Abyss, Attack on Titan, Chainsaw Man, Blame!, Berserk</li>
+          <li>Severely lactose intolerant but LOVE cheese- could wolf a bag of grated mature cheddar</li>
+        </ul>
+      </section>
+
+      <section id="WhatSheDoes" class="panel">
+  <p>Larp of all trades and chud of none (joking)</p>
+
+  <div class="work-item">
+    <div class="work-text">
+      <h3>Training models</h3>
+      <p>
+        I train AI models both traditional and deep learning on complex supply chain data across numerous industries to help uncover patterns and risk intelligence for our clients- mixed with LLMs because they're pretty good at semantic reasoning when they're not hallucinating.
+      </p>
+    </div>
+    <div class="plate">
+  <div class="p-head">
+    <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
+    <div class="p-title">tune_xgb.py</div>
+  </div>
+  <pre class="p-body"><span class="k">import</span> optuna
+<span class="k">from</span> xgboost <span class="k">import</span> XGBClassifier
+
+<span class="k">def</span> <span class="f">objective</span>(trial):
+    params = {
+        <span class="s">"max_depth"</span>: trial.<span class="f">suggest_int</span>(<span class="s">"max_depth"</span>, <span class="n">3</span>, <span class="n">10</span>),
+        <span class="s">"learning_rate"</span>: trial.<span class="f">suggest_float</span>(<span class="s">"learning_rate"</span>, <span class="n">0.01</span>, <span class="n">0.3</span>),
+        <span class="s">"subsample"</span>: trial.<span class="f">suggest_float</span>(<span class="s">"subsample"</span>, <span class="n">0.6</span>, <span class="n">1.0</span>),
+    }
+    model = <span class="f">XGBClassifier</span>(**params)
+    model.<span class="f">fit</span>(X_train, y_train)
+    <span class="k">return</span> model.<span class="f">score</span>(X_val, y_val)
+
+study = optuna.<span class="f">create_study</span>(direction=<span class="s">"maximize"</span>)
+study.<span class="f">optimize</span>(objective, n_trials=<span class="n">50</span>)
+
+<span class="o">[I] Trial 47 finished, value: 0.912</span>
+<span class="o">[I] Best params: {'max_depth': 6, 'learning_rate': 0.084}</span></pre>
+</div>
+  </div>
+
+  <div class="work-item">
+    <div class="work-text">
+      <h3>Data pipelines</h3>
+      <p>
+        I don't just build the models, I deploy them too- sometimes simple statistical techniques rather than ML. Familiar with Google Cloud, Cloud Run, Cloud Scheduler cronjobs, SQL, and Data Studio dashboards.
+      </p>
+    </div>
+    <div class="plate">
+      <div class="p-head">
+        <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
+        <div class="p-title">bash: gcloud deploy</div>
+      </div>
+      <pre class="p-body"><span class="k">$</span> gcloud run deploy risk-pipeline \
+    --image gcr.io/supply-risk/engine:<span class="s">v2.1</span>
+
+<span class="o">✓ Service deployed successfully.</span>
+
+<span class="k">$</span> gcloud scheduler jobs create http daily-eval \
+    --schedule=<span class="s">"0 6 * * 1-5"</span></pre>
+    </div>
+  </div>
+
+  <div class="work-item">
+    <div class="work-text">
+      <h3>Agentic pipelines</h3>
+      <p>
+        I spend more time system designing and prototyping than deploying BECAUSE when I deploy something, you can trust it's ready. Big up LangGraph
+      </p>
+    </div>
+    <div class="plate">
+      <div class="p-head">
+        <div class="p-dots"><span class="p-dot r"></span><span class="p-dot"></span><span class="p-dot"></span></div>
+        <div class="p-title">agent_flow.py</div>
+      </div>
+      <pre class="p-body"><span class="k">from</span> langgraph.graph <span class="k">import</span> StateGraph, END
+
+workflow = <span class="f">StateGraph</span>(SupplierState)
+workflow.<span class="f">add_node</span>(<span class="s">"assess_risk"</span>, model_node)
+workflow.<span class="f">add_conditional_edges</span>(
+    <span class="s">"assess_risk"</span>,
+    <span class="k">lambda</span> s: <span class="s">"escalate"</span> <span class="k">if</span> s[<span class="s">"score"</span>]>0.75 <span class="k">else</span> END
+)</pre>
+    </div>
+  </div>
+</section>
+
+      <section id="WhatSheKnows" class="panel">
+        <h3>Languages</h3>
+        <p>Python, C++, Java, C#, HTML, CSS, JS, SQL</p>
+        <h3>Data science</h3>
+        <p>NumPy, Pandas, SciPy, Matplotlib, Seaborn, Scikit-Learn, PyTorch, XGBoost, OpenCV, StatsModels</p>
+        <h3>Agentic knowledge</h3>
+        <p>LangGraph, LangChain, LLM APIs, DSPy</p>
+        <h3>MLOps</h3>
+        <p>Google Cloud, Cloud Run, BigQuery, Data Studio</p>
+        <h3>Tools</h3>
+        <p>Git, Jupyter</p>
+      </section>
+
+      <section id="CheckHerOut" class="panel">
+      <p>
+        <a href="https://www.youtube.com/@iris-lachinemearning" target="_blank" rel="noopener">YouTube</a>
+        &middot;
+        <span class="copy-handle" data-copy="spinekisser" title="Click to copy">Discord: @spinekisser</span>
+        &middot;
+        <a href="https://github.com/cat7enthusiast" target="_blank" rel="noopener">GitHub</a>
+      </p>
+    </section>
+    </main>
+
+  </body>
+</html>
