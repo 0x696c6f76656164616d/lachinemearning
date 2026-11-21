@@ -39,13 +39,12 @@ body { overflow-x: hidden; }
 }
 
 .about-image {
-    width: 100%;
-    max-width: 420px;
-    margin: 1.5rem auto 2rem;
-    position: relative;
-    overflow: hidden;
+    float: right;
+    width: 145px;
+    margin: 0.3rem 0 1rem 1.2rem;
     border: 1px solid var(--glass-border);
-    border-radius: 12px;
+    border-radius: 10px;
+    overflow: hidden;
     background: var(--glass);
 }
 
@@ -53,23 +52,21 @@ body { overflow-x: hidden; }
     display: block;
     width: 100%;
     height: auto;
-    opacity: 0.9;
-    filter: grayscale(20%) contrast(1.05);
-    transition: opacity 0.3s ease, filter 0.3s ease;
+    opacity: 0.85;
+    filter: grayscale(20%);
+    transition: opacity 0.3s ease;
 }
 
 .about-image:hover img {
     opacity: 1;
-    filter: grayscale(0%) contrast(1.05);
 }
 
 .image-caption {
     display: block;
-    padding: 0.65rem 1rem;
+    padding: 0.4rem;
     color: var(--purple);
     font-family: VT323, monospace;
-    font-size: 1.1rem;
-    letter-spacing: 0.05em;
-    background: #ffffff08;
+    font-size: 0.85rem;
+    text-align: center;
     border-top: 1px solid var(--glass-border);
 }
